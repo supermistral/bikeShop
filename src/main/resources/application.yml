@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: create
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bikeShop
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
