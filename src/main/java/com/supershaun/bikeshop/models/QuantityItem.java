@@ -14,7 +14,8 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 public class QuantityItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "quantity_items_seq", sequenceName = "quantity_items_sequence", allocationSize = 1)
+    @GeneratedValue(generator = "quantity_items_seq", strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
 

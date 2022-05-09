@@ -17,7 +17,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "items_seq", sequenceName = "items_sequence", allocationSize = 1)
+    @GeneratedValue(generator = "items_seq", strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
 

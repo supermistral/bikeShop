@@ -13,7 +13,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class ItemImage {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "item_images_seq", sequenceName = "item_images_sequence", allocationSize = 1)
+    @GeneratedValue(generator = "item_images_seq", strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
 

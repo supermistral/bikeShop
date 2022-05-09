@@ -16,7 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "orders_seq", sequenceName = "orders_sequence", allocationSize = 1)
+    @GeneratedValue(generator = "orders_seq", strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Long id;
 
