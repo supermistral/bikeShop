@@ -1,5 +1,6 @@
 package com.supershaun.bikeshop.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,11 @@ public class Item {
     @Column(name = "name")
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnore
+    private Category category;
+
     @Column(name = "description")
     private String description;
 
@@ -39,4 +45,12 @@ public class Item {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private Set<ItemImage> images = new HashSet<>();
+
+    public Item(String name, Category category, String description, double price, int stock) {
+        this.name = name;
+        this.category = category;
+        this.description = description;
+        this.price = price;
+        this.stock = stock;
+    }
 }
