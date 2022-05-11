@@ -18,11 +18,11 @@ public class ItemImage {
     @Column(name = "id")
     private Long id;
 
-    @Lob
-    @Column(name = "image")
-    private byte[] image;
+    @Column(name = "image", nullable = false)
+    private String image;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "item_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
+
 }

@@ -7,8 +7,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +34,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
     @JsonIgnoreProperties("parent")
     private Set<Category> children = new HashSet<>();
 
@@ -42,9 +45,15 @@ public class Category {
     @JsonIgnore
     private Set<Item> items;
 
-    public Category(String name, Category parent, String description) {
+    @Column(name = "image")
+    private String image;
+
+    static public String imagePath = "categories/";
+
+    public Category(String name, Category parent, String description, String image) {
         this.name = name;
         this.parent = parent;
         this.description = description;
+        this.image = image;
     }
 }
