@@ -1,22 +1,27 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 import SearchBar from "./SearchBar";
 import Options from "./Options";
+import Menu from "./Menu/Menu";
 
 
 const Header = () => {
     return (
-        <Stack 
-            direction="row"
-            spacing={2}
-            sx={{ justifyContent: 'center' }}
-        >
-            <Typography sx={{ fontSize: "30px" }}>
-                Bike Shop
-            </Typography>
-            <SearchBar />
-            <Options />
-        </Stack>
+        <Box>
+            <Stack 
+                direction="row"
+                spacing={2}
+                sx={{ justifyContent: 'center', py: 2 }}
+            >
+                <Typography sx={{ fontSize: "30px" }}>
+                    Bike Shop
+                </Typography>
+                <SearchBar />
+                <Options />
+            </Stack>
+            <Menu />
+        </Box>
+        
     )
 }
 

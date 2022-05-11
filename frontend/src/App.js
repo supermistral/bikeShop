@@ -16,7 +16,7 @@ const App = () => {
                 minHeight: "100vh",
             }}
         >
-            <Container maxWidth="lg" sx={{ my: 3, flex: 1 }}>
+            <Container maxWidth="lg" sx={{ mb: 3, flex: 1 }}>
                 <Header />
                 <BrowserRouter>
                     <Routes>
