@@ -5,7 +5,7 @@ import Options from "./Options";
 import Menu from "./Menu/Menu";
 
 
-const Header = () => {
+const Header = ({ categories }) => {
     return (
         <Box>
             <Stack 
@@ -19,7 +19,7 @@ const Header = () => {
                 <SearchBar />
                 <Options />
             </Stack>
-            <Menu />
+            <Menu categories={categories} />
         </Box>
         
     )

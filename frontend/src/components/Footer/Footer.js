@@ -1,6 +1,7 @@
 import { Divider, IconButton, Link, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
+import { Link as RouterLink } from 'react-router-dom';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import { styled } from "@mui/styles";
@@ -35,6 +36,7 @@ const Footer = () => {
             >
                 <Stack>
                     <SubdivisionTypography variant="h5">Поддержка</SubdivisionTypography>
+                    <Link component={RouterLink} to="/catalog" underline="hover" variant="body2">Каталог</Link>
                     <Link href="#" underline="hover" variant="body2">Как заказать</Link>
                     <Link href="#" underline="hover" variant="body2">Оплата и доставка</Link>
                     <Link href="#" underline="hover" variant="body2">Возврат и обмен</Link>

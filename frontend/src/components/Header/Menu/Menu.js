@@ -6,15 +6,15 @@ import MenuItem from "./MenuItem";
 import "./Menu.css";
 
 
-const Menu = () => {
-    const [categories, setCategories] = useState();
+const Menu = ({ categories }) => {
+    // const [categories, setCategories] = useState();
 
-    useEffect(() => {
-        fetch("/api/category")
-            .then(res => res.json())
-            .then(data => setCategories(data))
-            .catch(e => console.log(e));
-    }, []);
+    // useEffect(() => {
+    //     fetch("/api/category")
+    //         .then(res => res.json())
+    //         .then(data => setCategories(data))
+    //         .catch(e => console.log(e));
+    // }, []);
     
     return (
         <Stack 

@@ -1,34 +1,46 @@
 import { Container } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Catalog from "./components/Catalog/Catalog";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import Home from "./components/Home/Home";
 
 
 const App = () => {
+    const [categories, setCategories] = useState();
+
+    useEffect(() => {
+        fetch("/api/category")
+            .then(res => res.json())
+            .then(data => setCategories(data))
+            .catch(e => console.log(e));
+    }, []);
+
     return (
         <Box 
             sx={{ 
                 display: 'flex', 
                 flexDirection: 'column', 
-                minHeight: "100vh",
+                minHeight: '100vh',
             }}
         >
-            <Container maxWidth="lg" sx={{ mb: 3, flex: 1 }}>
-                <Header />
-                <BrowserRouter>
+            <BrowserRouter>
+                <Container maxWidth="lg" sx={{ mb: 3, flex: 1 }}>
+                    <Header categories={categories} />
                     <Routes>
                         <Route exact path="/" element={<Home />} />
+                        <Route path="/catalog/*" element={<Catalog categories={categories} />} />
+                        {/* Search path */}
                     </Routes>
-                </BrowserRouter>
-            </Container>
-            <Box sx={{ backgroundColor: "#eee" }}>
-                <Container maxWidth="lg" sx={{ my: 0 }}>
-                    <Footer />
                 </Container>
-            </Box>
+                <Box sx={{ backgroundColor: "#eee" }}>
+                    <Container maxWidth="lg" sx={{ my: 0 }}>
+                        <Footer />
+                    </Container>
+                </Box>
+            </BrowserRouter>
         </Box>
     )
 }
