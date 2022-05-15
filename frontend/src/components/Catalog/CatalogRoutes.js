@@ -4,18 +4,8 @@ import CatalogSection from "./CatalogSection";
 import ProductList from "./ProductList/ProductList";
 
 
-const getRoutesRecursive = (items, parent = null) => {
+const getRoutesRecursive = items => {
     let routes = [];
-
-    // Enable default '/' and '.../items' paths
-    // routes.push({
-    //     path: '',
-    //     element: <CatalogSection items={items} />
-    // });
-    // routes.push({
-    //     path: 'items',
-    //     element: <ProductList categoryId={parent ? parent.id : null} />
-    // })
 
     items.forEach(item => {
         if (item.children.length !== 0) {
@@ -28,10 +18,6 @@ const getRoutesRecursive = (items, parent = null) => {
                 ...getRoutesRecursive(item.children)
             ];
         }
-        // item.children.length !== 0 && routes.push({
-        //     path: item.id.toString(),
-        //     children: getRoutesRecursive(item.children)
-        // });
     })
 
     return routes;
