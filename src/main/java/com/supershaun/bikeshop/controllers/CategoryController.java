@@ -28,6 +28,17 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAll());
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+        Object category = categoryService.getById(id);
+        if (category == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new DefaultMessageEntity(Messages.CategoryIdNotFound));
+        }
+        return ResponseEntity.ok(category);
+    }
+
     @GetMapping("{id}/items")
     public ResponseEntity<?> getItemsById(@PathVariable("id") Long id) {
         List<Item> items = categoryService.getItemsById(id);

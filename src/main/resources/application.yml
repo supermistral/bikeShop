@@ -12,4 +12,4 @@ spring:
 
 settings:
   image:
-    path: media/
+    path: /media/

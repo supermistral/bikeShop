@@ -9,4 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DefaultMessageEntity {
     private Messages message;
+
+    public String getMessage() {
+        return message.toString();
+    }
 }

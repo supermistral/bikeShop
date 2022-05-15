@@ -2,12 +2,14 @@ package com.supershaun.bikeshop.services;
 
 import com.supershaun.bikeshop.models.Category;
 import com.supershaun.bikeshop.models.Item;
+import com.supershaun.bikeshop.models.dto.CategoryDetailDto;
 import com.supershaun.bikeshop.models.dto.CategoryWithoutChildrenDto;
 import com.supershaun.bikeshop.repositories.CategoryRepository;
 import com.supershaun.bikeshop.services.interfaces.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,15 @@ public class CategoryService implements ICategoryService {
         return categoryRepository.findAll().stream()
                 .map(CategoryWithoutChildrenDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CategoryDetailDto getById(Long id) {
+        Optional<Category> category = categoryRepository.findById(id);
+        if (category.isPresent()) {
+            return new CategoryDetailDto(category.get());
+        }
+        return null;
     }
 
     @Override

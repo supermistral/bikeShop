@@ -25,4 +25,10 @@ public class ItemImage {
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
 
+    public static String imagePath = "items/";
+
+    public ItemImage(String image, Item item) {
+        this.image = image;
+        this.item = item;
+    }
 }

@@ -1,6 +1,7 @@
 package com.supershaun.bikeshop.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,8 +31,8 @@ public class Item {
     @JsonIgnore
     private Category category;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "specifications")
+    private String specifications;
 
     @Column(name = "price")
     @Min(value = 1)
@@ -45,12 +46,13 @@ public class Item {
     private int stock;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({ "id", "item" })
     private Set<ItemImage> images = new HashSet<>();
 
-    public Item(String name, Category category, String description, double price, int stock) {
+    public Item(String name, Category category, String specifications, double price, int stock) {
         this.name = name;
         this.category = category;
-        this.description = description;
+        this.specifications = specifications;
         this.price = price;
         this.stock = stock;
     }

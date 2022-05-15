@@ -21,6 +21,6 @@ public class Company {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "specifications")
+    private String specifications;
 }

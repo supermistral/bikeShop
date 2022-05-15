@@ -38,8 +38,8 @@ public class Category {
     @JsonIgnoreProperties("parent")
     private Set<Category> children = new HashSet<>();
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "specifications")
+    private String specifications;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -50,10 +50,10 @@ public class Category {
 
     static public String imagePath = "categories/";
 
-    public Category(String name, Category parent, String description, String image) {
+    public Category(String name, Category parent, String specifications, String image) {
         this.name = name;
         this.parent = parent;
-        this.description = description;
+        this.specifications = specifications;
         this.image = image;
     }
 }

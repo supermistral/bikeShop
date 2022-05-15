@@ -15,12 +15,12 @@ public class CategoryWithoutChildrenDto {
     private Long id;
     private String name;
     private Category parent;
-    private String description;
+    private String specifications;
 
     public CategoryWithoutChildrenDto(Category category) {
         id = category.getId();
         name = category.getName();
         parent = category.getParent();
-        description = category.getDescription();
+        specifications = category.getSpecifications();
     }
 }
