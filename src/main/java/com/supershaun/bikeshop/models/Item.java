@@ -31,8 +31,9 @@ public class Item {
     @JsonIgnore
     private Category category;
 
-    @Column(name = "specifications")
-    private String specifications;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ItemSpecification> specifications = new HashSet<>();
 
     @Column(name = "price")
     @Min(value = 1)
@@ -49,10 +50,9 @@ public class Item {
     @JsonIgnoreProperties({ "id", "item" })
     private Set<ItemImage> images = new HashSet<>();
 
-    public Item(String name, Category category, String specifications, double price, int stock) {
+    public Item(String name, Category category, double price, int stock) {
         this.name = name;
         this.category = category;
-        this.specifications = specifications;
         this.price = price;
         this.stock = stock;
     }
