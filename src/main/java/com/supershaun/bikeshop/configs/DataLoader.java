@@ -2,15 +2,11 @@ package com.supershaun.bikeshop.configs;
 
 import com.supershaun.bikeshop.models.*;
 import com.supershaun.bikeshop.repositories.*;
-import com.supershaun.bikeshop.services.interfaces.IImageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -162,7 +158,7 @@ public class DataLoader implements ApplicationRunner {
         );
         ItemSpecification itemSpecification32 = new ItemSpecification(
                 item3,
-                categorySpecification21,
+                categorySpecification12,
                 "Унисекс"
         );
         ItemSpecification itemSpecification33 = new ItemSpecification(

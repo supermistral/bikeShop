@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/category")
@@ -40,8 +41,9 @@ public class CategoryController {
     }
 
     @GetMapping("{id}/items")
-    public ResponseEntity<?> getItemsById(@PathVariable("id") Long id) {
-        List<Item> items = categoryService.getItemsById(id);
+    public ResponseEntity<?> getItemsById(@PathVariable("id") Long id,
+                                          @RequestParam Map<String, String> params) {
+        List<Item> items = categoryService.getItemsById(id, params);
         if (items == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)

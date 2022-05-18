@@ -30,7 +30,6 @@ public class ItemSpecification {
     private CategorySpecification categorySpecification;
 
     @Column(name = "value")
-    @NotNull
     private String value;
 
     public ItemSpecification(Item item, CategorySpecification categorySpecification, String value) {

@@ -1,9 +1,8 @@
 package com.supershaun.bikeshop.models.dto;
 
-import com.supershaun.bikeshop.models.Category;
-import com.supershaun.bikeshop.models.CategorySpecification;
-import com.supershaun.bikeshop.models.Item;
-import com.supershaun.bikeshop.models.ItemSpecification;
+import com.supershaun.bikeshop.models.*;
+import com.supershaun.bikeshop.utils.SpecificationParser;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +15,7 @@ public class CategoryDetailDto {
     private String name;
     private List<CategoryChildDto> lastChildren;
     private List<CategorySpecificationDto> specifications;
-    private List<Item> items;
+    private Price price;
 
     @Getter
     @Setter
@@ -44,52 +43,58 @@ public class CategoryDetailDto {
         }
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class Price {
+        private double min, max;
+    }
+
     public CategoryDetailDto(Category category) {
         name = category.getName();
         lastChildren = createLastChildren(category);
-        items = createItemsOfLastChildren(category);
-        specifications = createSpecifications(category, items);
+        specifications = createSpecifications(category);
+        price = createPrice(category);
     }
 
-    private List<CategorySpecificationDto> createSpecifications(Category category, List<Item> items) {
+    private Price createPrice(Category category) {
+        List<Item> items = new LinkedList<>();
+        fillItemsOfLastChildren(category, items);
+
+        if (items.size() == 0)
+            return new Price(0, 0);
+
+        List<Double> itemsPrices = items.stream()
+                .map(Item::getPrice)
+                .collect(Collectors.toList());
+
+        double minPrice = Collections.min(itemsPrices);
+        double maxPrice = Collections.max(itemsPrices);
+
+        return new Price(minPrice, maxPrice);
+    }
+
+    private List<CategorySpecificationDto> createSpecifications(Category category) {
         List<CategorySpecificationDto> specifications = new LinkedList<>();
 
-        // Sorted map for sorting specifications: specifications of the higher categories in the hierarchy
+        // Set (instead of List) to avoid duplicates
+        // Sorted set for sorting specifications: specifications of the higher categories in the hierarchy
         //      are higher; within same category sorting by name
-        Map<CategorySpecification, Set<String>> categorySpecificationsMap = new TreeMap<>((o1, o2) -> {
+        Set<CategorySpecification> categorySpecifications = new TreeSet<>((o1, o2) -> {
             if (o1.getCategory().getId() == o2.getCategory().getId())
                 return o1.getName().compareTo(o2.getName());
-
-            return o2.getCategory().getChildren().size() - o1.getCategory().getChildren().size();
+            return o1.getCategory().getChildren().size() - o2.getCategory().getChildren().size();
         });
 
-        // Set (instead of List) to avoid duplicates
-        Set<CategorySpecification> categorySpecifications = new HashSet<>();
+        // Recursive filling
         fillSpecificationsKeys(category, categorySpecifications);
-
-        // Create map for each category specification
-        categorySpecifications.forEach(s -> categorySpecificationsMap.put(s, new HashSet<>()));
-
-        // For each item need to get it's specifications and put it into list of map
-        //      only if parent (category's) specification contains in built 'category specifications' list
-        items.forEach(item -> {
-            Set<ItemSpecification> itemSpecifications = item.getSpecifications();
-
-            itemSpecifications.forEach(itemSpecification -> {
-                CategorySpecification categorySpecification = itemSpecification.getCategorySpecification();
-                Set<String> itemCategorySpecifications = categorySpecificationsMap.get(categorySpecification);
-
-                if (itemCategorySpecifications != null)
-                    itemCategorySpecifications.add(itemSpecification.getValue());
-            });
-        });
-
-        // Transform map to list
-        categorySpecificationsMap.forEach((k, v) -> specifications.add(new CategorySpecificationDto(
-                        k,
-                        v.stream().sorted().collect(Collectors.toList())
-                ))
-        );
+//        System.out.println(categorySpecifications.size());
+        categorySpecifications.forEach(spec -> specifications.add(new CategorySpecificationDto(
+                spec,
+                SpecificationParser.parseKeys(spec.getChoices()).stream()
+                        .sorted()
+                        .collect(Collectors.toList())
+        )));
 
         return specifications;
     }
@@ -100,7 +105,7 @@ public class CategoryDetailDto {
 
         specifications.addAll(
                 category.getSpecifications().stream()
-                        .filter(s -> !s.getChoices().isEmpty())     // Without choices - is not filterable
+                        .filter(s -> !s.getChoices().isEmpty())    // Without choices - is not filterable
                         .collect(Collectors.toList())
         );
         fillSpecificationsKeys(category.getParent(), specifications);
