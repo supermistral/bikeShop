@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "",
+  "specifications": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -28,8 +28,10 @@
     "@mui/material": "^5.6.4",
     "@mui/styles": "^5.6.2",
     "html-webpack-plugin": "^5.5.0",
+    "lodash": "^4.17.21",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-number-format": "^4.9.3",
     "react-router-dom": "^6.3.0"
   }
 }
