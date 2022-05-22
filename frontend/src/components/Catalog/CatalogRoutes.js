@@ -1,6 +1,7 @@
 import React from "react";
 import { useRoutes } from "react-router-dom";
 import CatalogSection from "./CatalogSection";
+import ProductDetail from "./ProductDetail/ProductDetail";
 import ProductList from "./ProductList/ProductList";
 
 
@@ -31,6 +32,10 @@ const getRoutes = items => [
     {
         path: ':categoryId/items',
         element: <ProductList categories={items} />
+    },
+    {
+        path: 'item/:itemId',
+        element: <ProductDetail />
     },
     ...getRoutesRecursive(items)
 ];

@@ -6,19 +6,15 @@ import CatalogRoutes from "./CatalogRoutes";
 
 const Catalog = ({ categories }) => {
     return (
-        <>
-            <Box>
-                <Typography variant="h4" sx={{ py: 2 }}>Каталог</Typography>
-                <Divider />
-                {categories &&
-                    <>
-                        <CatalogBreadcrumb items={categories} />
-                        <CatalogRoutes items={categories} />
-                    </>
-                }
-            </Box>
-        </>
-        
+        <Box>
+            {categories &&
+                <>
+                    <CatalogBreadcrumb items={categories} />
+                    <Divider sx={{ mb: 2 }} />
+                    <CatalogRoutes items={categories} />
+                </>
+            }
+        </Box>
     )
 }
 

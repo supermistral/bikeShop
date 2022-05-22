@@ -49,9 +49,19 @@ const PriceFilter = ({ price }) => {
         []
     )
 
+    const debouncedSettingSearchParams = useCallback(
+        debounce(({ key, values }) => {
+            if (values[0] === minPrice && values[1] === maxPrice)
+                searchParams.delete(key);
+            else
+                searchParams.set(key, values.join("-"));
+            setSearchParams(searchParams);
+        }, 300),
+        []
+    )
+
     useEffect(() => {
-        searchParams.set("price", values.join("-"));
-        setSearchParams(searchParams);
+        debouncedSettingSearchParams({ key: "price", values: values });
     }, [values])
 
     const handleChange = e => {

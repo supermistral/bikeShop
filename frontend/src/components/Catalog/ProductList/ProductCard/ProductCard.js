@@ -1,11 +1,13 @@
 import { 
     Button, Card, CardActionArea, CardActions, 
-    CardContent, CardMedia, Typography, Box, Chip, IconButton
+    CardContent, CardMedia, Typography, Box, Chip, IconButton, Link
 } from "@mui/material";
 import React from "react";
+import { Link as RouteLink } from "react-router-dom";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { getItemByIdUrl } from "../../../../constants/requests";
 
 
 const ProductCard = ({ item }) => {
@@ -35,16 +37,18 @@ const ProductCard = ({ item }) => {
                 </IconButton>
             </Box>
             <CardActionArea>
-                <CardMedia
-                    component="img"
-                    image={item.images.length !== 0 && item.images[0].image}
-                    alt={item.name}
-                />
-                <CardContent sx={{ pb: 0 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{item.name}</Typography>
-                    <Typography variant="body2"></Typography>
-                    <Typography variant="subtitle1">{item.price} ₽</Typography>
-                </CardContent>
+                <Link component={RouteLink} to={getItemByIdUrl(item.id)}>
+                    <CardMedia
+                        component="img"
+                        image={item.image}
+                        alt={item.name}
+                    />
+                    <CardContent sx={{ pb: 0 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{item.name}</Typography>
+                        <Typography variant="body2"></Typography>
+                        <Typography variant="subtitle1">{item.price} ₽</Typography>
+                    </CardContent>
+                </Link>
             </CardActionArea>
             <CardActions className="card-actions">
                 <Button size="small" color="primary">Купить</Button>
