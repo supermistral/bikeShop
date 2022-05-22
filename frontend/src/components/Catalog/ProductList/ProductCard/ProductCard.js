@@ -5,9 +5,9 @@ import {
 import React from "react";
 import { Link as RouteLink } from "react-router-dom";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { getItemByIdUrl } from "../../../../constants/requests";
+import FavoriteIcon from "../../../Icons/FavoriteIcon";
 
 
 const ProductCard = ({ item }) => {
@@ -27,14 +27,16 @@ const ProductCard = ({ item }) => {
                         label: "нет в наличии",
                     })}
                 />
-                <IconButton
-                    size="small" 
-                    color="error" 
-                    aria-label="Добавить в избранное"
-                    sx={{ p: 0 }}
-                >
-                    <FavoriteBorderOutlinedIcon />
-                </IconButton>
+                <FavoriteIcon
+                    item={item}
+                    component={IconButton}
+                    componentProps={{
+                        size: "small",
+                        color: "error",
+                        "aria-label": "Добавить в избранное",
+                        sx: { p: 0 },
+                    }}
+                />
             </Box>
             <CardActionArea>
                 <Link component={RouteLink} to={getItemByIdUrl(item.id)}>

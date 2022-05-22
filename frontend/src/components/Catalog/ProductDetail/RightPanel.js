@@ -32,6 +32,7 @@ const RightPanel = ({ item, setInstanceId }) => {
             <RadioSpecifications
                 instances={item.instances}
                 setInstanceId={setInstanceId}
+                item={item}
             />
         </Box>
     )

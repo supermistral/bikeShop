@@ -4,10 +4,15 @@ import com.supershaun.bikeshop.models.dto.ItemDetailDto;
 import com.supershaun.bikeshop.responses.DefaultMessageEntity;
 import com.supershaun.bikeshop.responses.Messages;
 import com.supershaun.bikeshop.services.interfaces.IItemService;
+import com.supershaun.bikeshop.utils.SpecificationParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/items")
@@ -17,7 +22,15 @@ public class ItemController {
     private IItemService itemService;
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll(@RequestParam Map<String, String> params) {
+        String idsValue = params.get("id");
+        if (idsValue != null) {
+            List<Long> ids = SpecificationParser.parseKeys(idsValue).stream()
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(itemService.getByIds(ids));
+        }
         return ResponseEntity.ok(itemService.getAll());
     }
 

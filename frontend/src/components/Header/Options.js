@@ -3,17 +3,20 @@ import React from "react";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import RouteLink from "../DOM/RouteLink";
 
 
 const Options = () => {
     return (
         <Stack direction="row" sx={{ alignItems: 'center' }} spacing={1}>
-            <Fab 
-                size="small" 
-                aria-label="like"
-            >
-                <FavoriteBorderOutlinedIcon fontSize="small" />
-            </Fab>
+            <RouteLink to="/favorites">
+                <Fab 
+                    size="small" 
+                    aria-label="like"
+                >
+                    <FavoriteBorderOutlinedIcon fontSize="small" />
+                </Fab>
+            </RouteLink>
             <Fab 
                 variant="extended" 
                 sx={{ textTransform: "none" }} 

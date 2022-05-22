@@ -12,7 +12,6 @@ import RightPanel from "./RightPanel";
 const ProductDetail = () => {
     const { itemId } = useParams();
     const [item, setItem] = useState();
-    const [instanceIndex, setInstanceIndex] = useState(0);
     const [instanceId, setInstanceId] = useState();
 
     const [searchParams, setSearchParams] = useSearchParams();

@@ -25,11 +25,16 @@ public class SpecificationParser {
     }
 
     // key;key
-    public static List<String> parseKeys(String specifications) {
-        List<String> keys = Arrays.asList(specifications.split(";"));
+    public static List<String> parseKeysAndOrder(String specifications) {
+        List<String> keys = parseKeys(specifications);
         return keys.stream()
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    public static List<String> parseKeys(String specifications) {
+        List<String> keys = Arrays.asList(specifications.split(";"));
+        return keys;
     }
 
     public static String parseValueByKey(String specifications, String key) {

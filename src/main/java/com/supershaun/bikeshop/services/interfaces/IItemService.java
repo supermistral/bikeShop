@@ -8,5 +8,6 @@ import java.util.Map;
 
 public interface IItemService {
     List<Item> getAll();
+    List<Item> getByIds(List<Long> ids);
     ItemDetailDto getById(Long id);
 }

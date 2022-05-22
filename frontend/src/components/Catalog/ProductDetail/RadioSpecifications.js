@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import FavoriteIcon from "../../Icons/FavoriteIcon";
 
 
 const calculateInstanceIds = (valueChoices, startIndex, endIndex) => {
@@ -199,7 +200,7 @@ const calculateValuesChoices = (specifications, index = 0, newValue = null, valu
 }
 
 
-const RadioSpecifications = ({ instances, setInstanceId }) => {
+const RadioSpecifications = ({ instances, setInstanceId, item }) => {
     const specifications = createInstancesSpecifications(instances);
 
     const [valueChoices, setValueChoices] = useState(calculateValuesChoices(specifications));
@@ -240,15 +241,19 @@ const RadioSpecifications = ({ instances, setInstanceId }) => {
                         label: "Нет в наличии",
                     })}
                 />
-                <Button
-                    variant="outlined"
-                    size="small"
-                    sx={{ textTransform: 'none' }}
-                    color="error"
-                >
-                    В избранное 
-                    <FavoriteBorderOutlinedIcon color="error" sx={{ ml: 0.5 }} />
-                </Button>
+                <FavoriteIcon
+                    item={item}
+                    component={Button}
+                    componentProps={{
+                        variant: "outlined",
+                        size: "small",
+                        sx: { textTransform: 'none' },
+                        color: "error",
+                        children: "В избранное"
+                    }}
+                    color="error" 
+                    sx={{ ml: 0.5 }}
+                />
             </Box>
             <Box>
                 {specifications.map((specification, i) =>
