@@ -1,5 +1,6 @@
 package com.supershaun.bikeshop.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,12 +24,12 @@ public class ItemImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
-    private Item item;
+    private ItemInstance itemInstance;
 
     public static String imagePath = "items/";
 
-    public ItemImage(String image, Item item) {
+    public ItemImage(String image, ItemInstance itemInstance) {
         this.image = image;
-        this.item = item;
+        this.itemInstance = itemInstance;
     }
 }

@@ -6,6 +6,7 @@ import com.supershaun.bikeshop.models.Item;
 import com.supershaun.bikeshop.models.ItemSpecification;
 import com.supershaun.bikeshop.models.dto.CategoryDetailDto;
 import com.supershaun.bikeshop.models.dto.CategoryWithoutChildrenDto;
+import com.supershaun.bikeshop.models.dto.ItemDetailDto;
 import com.supershaun.bikeshop.repositories.CategoryRepository;
 import com.supershaun.bikeshop.repositories.CategorySpecificationRepository;
 import com.supershaun.bikeshop.services.interfaces.ICategoryService;
@@ -168,7 +169,6 @@ public class CategoryService implements ICategoryService {
 
     public static List<Item> filterAndSort(List<Item> items) {
         return items.stream()
-                .filter(item -> item.getStock() > 0)
                 .sorted((item1, item2) -> (int) (item1.getPrice() - item2.getPrice()))
                 .collect(Collectors.toList());
     }

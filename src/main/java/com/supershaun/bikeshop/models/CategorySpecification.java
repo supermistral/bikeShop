@@ -33,13 +33,22 @@ public class CategorySpecification {
     @Column(name = "choices")
     private String choices;
 
-    @OneToMany(mappedBy = "categorySpecification")
+    @OneToMany(mappedBy = "categorySpecification", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<ItemSpecification> itemSpecifications;
+
+    @OneToMany(mappedBy = "categorySpecification", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ItemInstanceSpecification> itemInstanceSpecifications;
 
     public CategorySpecification(Category category, String name, String choices) {
         this.category = category;
         this.name = name;
         this.choices = choices;
+    }
+
+    public CategorySpecification(Category category, String name) {
+        this.category = category;
+        this.name = name;
     }
 }

@@ -8,8 +8,11 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "items")
@@ -33,7 +36,16 @@ public class Item {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<ItemSpecification> specifications = new HashSet<>();
+    @OrderBy("id")
+    private Set<ItemInstance> instances;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ItemSpecification> specifications;
+
+    @Column(name = "description", columnDefinition="TEXT")
+    @JsonIgnore
+    private String description;
 
     @Column(name = "price")
     @Min(value = 1)
@@ -43,17 +55,28 @@ public class Item {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(name = "stock")
-    private int stock;
-
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties({ "id", "item" })
-    private Set<ItemImage> images = new HashSet<>();
-
-    public Item(String name, Category category, double price, int stock) {
+    public Item(String name, Category category, String description, double price) {
         this.name = name;
         this.category = category;
+        this.description = description;
         this.price = price;
-        this.stock = stock;
+    }
+
+    public int getStock() {
+        return instances.stream().mapToInt(ItemInstance::getStock).sum();
+    }
+
+    public String getImage() {
+        if (instances.size() == 0)
+            return null;
+
+        ItemInstance instance = instances.stream().findAny().orElse(null);
+        if (instance == null)
+            return null;
+
+        return instance.getImages().stream()
+                .map(ItemImage::getImage)
+                .findAny()
+                .orElse(null);
     }
 }

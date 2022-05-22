@@ -83,12 +83,12 @@ public class CategoryDetailDto {
         Set<CategorySpecification> categorySpecifications = new TreeSet<>((o1, o2) -> {
             if (o1.getCategory().getId() == o2.getCategory().getId())
                 return o1.getName().compareTo(o2.getName());
-            return o1.getCategory().getChildren().size() - o2.getCategory().getChildren().size();
+            return o2.getCategory().getChildren().size() - o1.getCategory().getChildren().size();
         });
 
         // Recursive filling
         fillSpecificationsKeys(category, categorySpecifications);
-//        System.out.println(categorySpecifications.size());
+
         categorySpecifications.forEach(spec -> specifications.add(new CategorySpecificationDto(
                 spec,
                 SpecificationParser.parseKeys(spec.getChoices()).stream()
@@ -105,7 +105,7 @@ public class CategoryDetailDto {
 
         specifications.addAll(
                 category.getSpecifications().stream()
-                        .filter(s -> !s.getChoices().isEmpty())    // Without choices - is not filterable
+                        .filter(s -> s.getChoices() != null)    // Without choices - is not filterable
                         .collect(Collectors.toList())
         );
         fillSpecificationsKeys(category.getParent(), specifications);

@@ -1,6 +1,7 @@
 package com.supershaun.bikeshop.controllers;
 
 import com.supershaun.bikeshop.models.Item;
+import com.supershaun.bikeshop.models.dto.ItemDetailDto;
 import com.supershaun.bikeshop.responses.DefaultMessageEntity;
 import com.supershaun.bikeshop.responses.Messages;
 import com.supershaun.bikeshop.services.interfaces.ICategoryService;
@@ -35,7 +36,7 @@ public class CategoryController {
         if (category == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(new DefaultMessageEntity(Messages.CategoryIdNotFound));
+                    .body(new DefaultMessageEntity(Messages.CategoryIdNotFound.toString()));
         }
         return ResponseEntity.ok(category);
     }
@@ -47,7 +48,7 @@ public class CategoryController {
         if (items == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(new DefaultMessageEntity(Messages.CategoryIdNotFound));
+                    .body(new DefaultMessageEntity(Messages.CategoryIdNotFound.toString()));
         }
         return ResponseEntity.ok(items);
     }

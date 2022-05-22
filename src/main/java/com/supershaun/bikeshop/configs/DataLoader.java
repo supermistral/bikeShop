@@ -30,6 +30,12 @@ public class DataLoader implements ApplicationRunner {
     @Autowired
     private ItemSpecificationRepository itemSpecificationRepository;
 
+    @Autowired
+    private ItemInstanceRepository itemInstanceRepository;
+
+    @Autowired
+    private ItemInstanceSpecificationRepository itemInstanceSpecificationRepository;
+
     @Override
     public void run(ApplicationArguments args) {
         String imagePath = "category.png";
@@ -93,31 +99,50 @@ public class DataLoader implements ApplicationRunner {
                 "Назначение",
                 "Кросс-кантри;Эндуро;Даунхилл;Триал"
         );
+        CategorySpecification categorySpecification13 = new CategorySpecification(
+                category1,
+                "Цвет"
+        );
+        CategorySpecification categorySpecification14 = new CategorySpecification(
+                category1,
+                "Размер"
+        );
         categorySpecificationRepository.saveAll(Arrays.asList(
-                categorySpecification11, categorySpecification12, categorySpecification21
+                categorySpecification11, categorySpecification12, categorySpecification13,
+                categorySpecification14, categorySpecification21
         ));
 
         // Items
         Item item1 = new Item(
                 "Trek 4500",
                 category21,
-                50000,
-                3
+                "Только начинаете свой путь в мир маунтинбайка или уже являетесь опытным специалистом в неспешных поездках по городу и за его пределами – с самым универсальным и самым доступным в серии AGGRESSOR SPORT каждый ваш выезд будет сопровождаться комфортом и удовольствием. Как и более дорогие трейл-хартейлы, этот байк оборудован качественными компонентами комплектации и представлен в двух вариантах.",
+                50000
         );
         Item item2 = new Item(
                 "Trek 3500",
                 category21,
-                40000,
-                2
+                "Только начинаете свой путь в мир маунтинбайка или уже являетесь опытным специалистом в неспешных поездках по городу и за его пределами – с самым универсальным и самым доступным в серии AGGRESSOR SPORT каждый ваш выезд будет сопровождаться комфортом и удовольствием. Как и более дорогие трейл-хартейлы, этот байк оборудован качественными компонентами комплектации и представлен в двух вариантах.",
+                40000
         );
         Item item3 = new Item(
                 "Trek 2500",
                 category21,
-                30000,
-                1
+                "Только начинаете свой путь в мир маунтинбайка или уже являетесь опытным специалистом в неспешных поездках по городу и за его пределами – с самым универсальным и самым доступным в серии AGGRESSOR SPORT каждый ваш выезд будет сопровождаться комфортом и удовольствием. Как и более дорогие трейл-хартейлы, этот байк оборудован качественными компонентами комплектации и представлен в двух вариантах.",
+                30000
         );
         itemRepository.saveAll(Arrays.asList(
                 item1, item2, item3
+        ));
+
+        // Items Instances
+        ItemInstance itemInstance11 = new ItemInstance(item1, 3);
+        ItemInstance itemInstance12 = new ItemInstance(item1, 3);
+        ItemInstance itemInstance13 = new ItemInstance(item1,  0);
+        ItemInstance itemInstance2 = new ItemInstance(item2, 2);
+        ItemInstance itemInstance3 = new ItemInstance(item3, 1);
+        itemInstanceRepository.saveAll(Arrays.asList(
+                itemInstance11, itemInstance12, itemInstance13, itemInstance2, itemInstance3
         ));
 
         // Items Specifications
@@ -172,6 +197,64 @@ public class DataLoader implements ApplicationRunner {
                 itemSpecification31, itemSpecification32, itemSpecification33
         ));
 
+        // Items Instances Specifications
+        ItemInstanceSpecification itemInstanceSpecification111 = new ItemInstanceSpecification(
+                itemInstance11,
+                categorySpecification13,
+                "Желтый"
+        );
+        ItemInstanceSpecification itemInstanceSpecification112 = new ItemInstanceSpecification(
+                itemInstance11,
+                categorySpecification14,
+                "XL"
+        );
+        ItemInstanceSpecification itemInstanceSpecification121 = new ItemInstanceSpecification(
+                itemInstance12,
+                categorySpecification13,
+                "Красный"
+        );
+        ItemInstanceSpecification itemInstanceSpecification122 = new ItemInstanceSpecification(
+                itemInstance12,
+                categorySpecification14,
+                "XL"
+        );
+        ItemInstanceSpecification itemInstanceSpecification131 = new ItemInstanceSpecification(
+                itemInstance13,
+                categorySpecification13,
+                "Синий"
+        );
+        ItemInstanceSpecification itemInstanceSpecification132 = new ItemInstanceSpecification(
+                itemInstance13,
+                categorySpecification14,
+                "L"
+        );
+        ItemInstanceSpecification itemInstanceSpecification21 = new ItemInstanceSpecification(
+                itemInstance2,
+                categorySpecification13,
+                "Черный"
+        );
+        ItemInstanceSpecification itemInstanceSpecification22 = new ItemInstanceSpecification(
+                itemInstance2,
+                categorySpecification14,
+                "XS"
+        );
+        ItemInstanceSpecification itemInstanceSpecification31 = new ItemInstanceSpecification(
+                itemInstance3,
+                categorySpecification13,
+                "Черный"
+        );
+        ItemInstanceSpecification itemInstanceSpecification32 = new ItemInstanceSpecification(
+                itemInstance3,
+                categorySpecification14,
+                "M"
+        );
+        itemInstanceSpecificationRepository.saveAll(Arrays.asList(
+                itemInstanceSpecification111, itemInstanceSpecification112, itemInstanceSpecification121,
+                itemInstanceSpecification122, itemInstanceSpecification21, itemInstanceSpecification22,
+                itemInstanceSpecification31, itemInstanceSpecification32, itemInstanceSpecification131,
+                itemInstanceSpecification132
+        ));
+
         String itemImagePath = null;
         try {
             byte[] image = imageRepository.findByName(imagePath);
@@ -180,11 +263,12 @@ public class DataLoader implements ApplicationRunner {
             ex.printStackTrace();
         }
 
-        ItemImage itemImage1 = new ItemImage(itemImagePath, item1);
-        ItemImage itemImage2 = new ItemImage(itemImagePath, item2);
-        ItemImage itemImage3 = new ItemImage(itemImagePath, item3);
+        ItemImage itemImage11 = new ItemImage(itemImagePath, itemInstance11);
+        ItemImage itemImage12 = new ItemImage(itemImagePath, itemInstance12);
+        ItemImage itemImage2 = new ItemImage(itemImagePath, itemInstance2);
+        ItemImage itemImage3 = new ItemImage(itemImagePath, itemInstance3);
         itemImageRepository.saveAll(Arrays.asList(
-                itemImage1, itemImage2, itemImage3
+                itemImage11, itemImage12, itemImage2, itemImage3
         ));
     }
 }
