@@ -2,9 +2,11 @@ import { Box, Button, IconButton, Typography } from "@mui/material";
 import React from "react";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import RadioSpecifications from "./RadioSpecifications";
+import { formatPrice } from "../../../utils/product";
+import CartIcon from "../../Icons/CartIcon";
 
 
-const RightPanel = ({ item, setInstanceId }) => {
+const RightPanel = ({ item, setInstanceId, selectedInstance }) => {
     return (
         <Box>
             <Box sx={{
@@ -14,19 +16,25 @@ const RightPanel = ({ item, setInstanceId }) => {
                 backgroundColor: '#eef', '& > *': { width: '50%' }
             }}>
                 <Typography variant="h4" sx={{ textAlign: 'center' }}>
-                    {item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} 
+                    {formatPrice(item.price)} 
                     <Typography component="span" sx={{ fontSize: '0.75em' }}> ₽</Typography>
                 </Typography>
                 <Box>
-                    <Button variant="outlined" size="large" sx={{ textTransform: 'none' }}>
-                        <ShoppingCartOutlinedIcon />
-                        <Typography
-                            variant="body1"
-                            sx={{ ml: 1, fontSize: '1.25em' }}
-                        >
-                            Купить
-                        </Typography>
-                    </Button>
+                    <CartIcon
+                        item={selectedInstance}
+                        component={Button}
+                        componentProps={{
+                            variant: "outlined",
+                            size: "large",
+                            sx: { textTransform: "none" },
+                        }}
+                        componentActiveProps={{
+                            variant: "contained"
+                        }}
+                        text="Купить"
+                        variant="body1"
+                        sx={{ fontSize: '1.25em' }}
+                    />
                 </Box>
             </Box>
             <RadioSpecifications

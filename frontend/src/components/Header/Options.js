@@ -17,14 +17,16 @@ const Options = () => {
                     <FavoriteBorderOutlinedIcon fontSize="small" />
                 </Fab>
             </RouteLink>
-            <Fab 
-                variant="extended" 
-                sx={{ textTransform: "none" }} 
-                color="primary"
-            >
-                Корзина
-                <ShoppingCartOutlinedIcon sx={{ ml: 1 }} />
-            </Fab>
+            <RouteLink to="/cart">
+                <Fab 
+                    variant="extended" 
+                    sx={{ textTransform: "none" }} 
+                    color="primary"
+                >
+                    Корзина
+                    <ShoppingCartOutlinedIcon sx={{ ml: 1 }} />
+                </Fab>
+            </RouteLink>
             <Fab
                 variant="extended" 
                 sx={{ 

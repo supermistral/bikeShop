@@ -29,6 +29,7 @@ public class ItemInstance {
     private Item item;
 
     @OneToMany(mappedBy = "itemInstance")
+    @OrderBy("id")
     private Set<ItemInstanceSpecification> specifications;
 
     @Column(name = "stock")

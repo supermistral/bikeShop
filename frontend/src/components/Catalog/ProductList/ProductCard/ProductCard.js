@@ -8,6 +8,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import { getItemByIdUrl } from "../../../../constants/requests";
 import FavoriteIcon from "../../../Icons/FavoriteIcon";
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { formatPrice } from "../../../../utils/product";
 
 
 const ProductCard = ({ item }) => {
@@ -39,7 +41,11 @@ const ProductCard = ({ item }) => {
                 />
             </Box>
             <CardActionArea>
-                <Link component={RouteLink} to={getItemByIdUrl(item.id)}>
+                <Link 
+                    component={RouteLink} 
+                    to={getItemByIdUrl(item.id)}
+                    sx={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+                >
                     <CardMedia
                         component="img"
                         image={item.image}
@@ -48,12 +54,23 @@ const ProductCard = ({ item }) => {
                     <CardContent sx={{ pb: 0 }}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{item.name}</Typography>
                         <Typography variant="body2"></Typography>
-                        <Typography variant="subtitle1">{item.price} ₽</Typography>
+                        
                     </CardContent>
                 </Link>
             </CardActionArea>
-            <CardActions className="card-actions">
-                <Button size="small" color="primary">Купить</Button>
+            <CardActions sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                p: 0,
+                borderTop: '1px solid #ddd'
+            }}>
+                <Typography variant="subtitle1" sx={{ backgroundColor: '#eef', px: 2, py: 0.5 }}>
+                    {formatPrice(item.price)} ₽
+                </Typography>
+                <Button size="small" color="primary" sx={{ textTransform: 'none' }}>
+                    В корзину
+                    <AddShoppingCartIcon sx={{ ml: 0.5, fontSize: '1.5em'}} />
+                </Button>
             </CardActions>
         </Card>
     )

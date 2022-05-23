@@ -1,5 +1,6 @@
 package com.supershaun.bikeshop.controllers;
 
+import com.supershaun.bikeshop.exceptions.ItemNotFoundException;
 import com.supershaun.bikeshop.models.dto.ItemDetailDto;
 import com.supershaun.bikeshop.responses.DefaultMessageEntity;
 import com.supershaun.bikeshop.responses.Messages;
@@ -43,5 +44,18 @@ public class ItemController {
                     .body(new DefaultMessageEntity(Messages.CategoryIdNotFound.toString()));
         }
         return ResponseEntity.ok(item);
+    }
+
+    @GetMapping("/instances")
+    public ResponseEntity<?> getItemInstanceById(@RequestParam("id") String idsString) {
+        List<Long> ids = SpecificationParser.parseKeys(idsString).stream()
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+
+        if (ids.size() == 0) {
+            throw new ItemNotFoundException();
+        }
+
+        return ResponseEntity.ok(itemService.getAllInstancesByIds(ids));
     }
 }

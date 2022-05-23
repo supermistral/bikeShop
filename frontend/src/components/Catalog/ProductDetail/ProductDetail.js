@@ -42,7 +42,7 @@ const ProductDetail = () => {
     //     }
     // }, [searchParams, item]);
 
-    const currentInstance = item?.instances.find(i => i.id === instanceId) ||
+    const selectedInstance = item?.instances.find(i => i.id === instanceId) ||
         item?.instances[0];
 
     return (
@@ -52,13 +52,14 @@ const ProductDetail = () => {
                     <Typography variant="h4">{item.name}</Typography>
                     <Box sx={{ display: 'flex', '& > *': { width: '50%' } }}>
                         <Box>
-                            <ProductSlider images={currentInstance.images} />
+                            <ProductSlider images={selectedInstance.images} />
                             <ProductSpecifications item={item} />
                         </Box>
                         <Box>
                             <RightPanel
                                 item={item}
                                 setInstanceId={setInstanceId}
+                                selectedInstance={selectedInstance}
                             />
                         </Box>
                     </Box>
