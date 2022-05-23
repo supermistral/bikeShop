@@ -1,14 +1,17 @@
 package com.supershaun.bikeshop.configs;
 
 import com.supershaun.bikeshop.models.*;
+import com.supershaun.bikeshop.models.enums.ERole;
 import com.supershaun.bikeshop.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Set;
 
 @Component
 public class DataLoader implements ApplicationRunner {
@@ -35,6 +38,15 @@ public class DataLoader implements ApplicationRunner {
 
     @Autowired
     private ItemInstanceSpecificationRepository itemInstanceSpecificationRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -269,6 +281,34 @@ public class DataLoader implements ApplicationRunner {
         ItemImage itemImage3 = new ItemImage(itemImagePath, itemInstance3);
         itemImageRepository.saveAll(Arrays.asList(
                 itemImage11, itemImage12, itemImage2, itemImage3
+        ));
+
+        userLoader();
+    }
+
+    private void userLoader() {
+        // Roles
+        Role roleAdmin = new Role(ERole.ROLE_ADMIN);
+        Role roleUser = new Role(ERole.ROLE_USER);
+        roleRepository.saveAll(Arrays.asList(
+                roleAdmin, roleUser
+        ));
+
+        // Users
+        User userAdmin = new User(
+                "admin@mail.ru",
+                "admin",
+                passwordEncoder.encode("adminadmin")
+        );
+        userAdmin.setRoles(Set.of(roleUser, roleAdmin));
+        User userSimple = new User(
+                "user@mail.ru",
+                "user",
+                passwordEncoder.encode("useruser")
+        );
+        userSimple.setRoles(Set.of(roleUser));
+        userRepository.saveAll(Arrays.asList(
+                userAdmin, userSimple
         ));
     }
 }

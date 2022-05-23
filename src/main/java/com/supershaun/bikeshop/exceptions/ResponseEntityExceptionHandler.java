@@ -18,6 +18,22 @@ public class ResponseEntityExceptionHandler {
         );
     }
 
+    @ExceptionHandler({ EmailAlreadyInUseException.class })
+    public ResponseEntity<?> authExceptionHandling(Exception exception, WebRequest request) {
+        return new ResponseEntity<>(
+                new DefaultMessageEntity(exception.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(TokenRefreshException.class)
+    public ResponseEntity<?> tokenRefreshExceptionHandling(Exception exception, WebRequest request) {
+        return new ResponseEntity<>(
+                new DefaultMessageEntity(exception.getMessage()),
+                HttpStatus.FORBIDDEN
+        );
+    }
+
     @ExceptionHandler({ CategoryNotFoundException.class, ItemNotFoundException.class })
     public ResponseEntity<?> categoryNotFoundExceptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(

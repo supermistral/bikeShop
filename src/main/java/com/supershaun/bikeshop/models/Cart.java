@@ -24,5 +24,5 @@ public class Cart {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "id")
-    private User user;
+    private Client client;
 }

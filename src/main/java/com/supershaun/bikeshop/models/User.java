@@ -1,5 +1,6 @@
 package com.supershaun.bikeshop.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,10 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
@@ -22,33 +27,35 @@ public class User {
     private Long id;
 
     @Email
+    @Size(max = 60)
     @Column(name = "email")
     private String email;
 
-    @NotNull
-    @Column(name = "first_name")
-    private String firstName;
+    @NotBlank
+    @Size(max = 100)
+    @Column(name = "name")
+    private String name;
 
-    @NotNull
-    @Column(name = "last_name")
-    private String lastName;
-
-    @Column(name = "is_stuff")
-    private boolean isStuff = false;
-
-    @NotNull
+    @NotBlank
+    @Size(max = 120)
     @Column(name = "password")
     private String password;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private Cart cart;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    public User(String email, String firstName, String lastName, boolean isStuff, String password) {
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Client client;
+
+    public User(String email, String name, String password) {
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.isStuff = isStuff;
+        this.name = name;
         this.password = password;
     }
 }

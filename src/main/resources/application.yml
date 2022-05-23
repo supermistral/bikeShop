@@ -13,3 +13,8 @@ spring:
 settings:
   image:
     path: /media/
+
+  jwt:
+    secret: bikeshop_jwt
+    expiration: 60000
+    refresh-expiration: 600000
