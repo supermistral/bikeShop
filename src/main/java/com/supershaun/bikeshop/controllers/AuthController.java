@@ -15,6 +15,7 @@ import com.supershaun.bikeshop.responses.Messages;
 import com.supershaun.bikeshop.security.JwtUserDetails;
 import com.supershaun.bikeshop.security.jwt.JwtUtils;
 import com.supershaun.bikeshop.services.RefreshTokenService;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,7 +54,7 @@ public class AuthController {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-    @GetMapping("/signin")
+    @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDto loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -128,7 +129,7 @@ public class AuthController {
         return roles;
     }
 
-    @PostMapping("/refreshtoken")
+    @PostMapping("/token")
     public ResponseEntity<?> getToken(@Valid @RequestBody RefreshTokenRequestDto request) {
         String requestRefreshToken = request.getRefreshToken();
 
@@ -147,13 +148,18 @@ public class AuthController {
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
     }
 
-    @GetMapping("/logout")
+    @DeleteMapping("/token")
     public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String authorizationHeader) {
         if (!authorizationHeader.startsWith("Bearer ")) {
             throw new TokenRefreshException(authorizationHeader, "Token is not valid");
         }
 
-        String email = jwtUtils.getUserNameFromJwtToken(authorizationHeader.substring(7));
+        String email;
+        try {
+            email = jwtUtils.getUserNameFromJwtToken(authorizationHeader.substring(7));
+        } catch (ExpiredJwtException ex) {
+            email = ex.getClaims().getSubject();
+        }
 
         refreshTokenService.deleteByUserEmail(email);
         return ResponseEntity.ok(new DefaultMessageEntity(Messages.LogoutSuccessfully.toString()));

@@ -4,7 +4,14 @@ import { Link as RouterDomLink } from "react-router-dom";
 
 
 const RouteLink = (props) => (
-    <Link component={RouterDomLink} {...props} />
+    <Link 
+        component={RouterDomLink}
+        {...{
+            underline: 'hover',
+            variant: 'body2',
+        }}
+        {...props} 
+    />
 )
 
 export default RouteLink;

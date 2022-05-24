@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class LoginRequestDto {
     @NotBlank
-    @Email
+    @Email(message = "Неверный формат email")
     private String email;
 
     @NotBlank

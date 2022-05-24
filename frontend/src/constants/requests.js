@@ -2,10 +2,14 @@
     URLS
 */
 
+export const BASE_URL = "http://localhost:3000";
+
 // API URLS
 
 // Global api url
 export const API_URL = "/api";
+
+export const BASE_API_URL = BASE_URL + API_URL;
 
 export const categoriesApiUrl = API_URL + "/category";
 
