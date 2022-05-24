@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { addItemToCartInLocalStorage, cartLocalStorageContainsItem } from "../../actions/cart";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
@@ -18,7 +18,12 @@ const CartIcon = ({
         cartLocalStorageContainsItem(item)
     );
 
+    useEffect(() => setActive(
+        cartLocalStorageContainsItem(item)
+    ), [item]);
+
     const Component = component;
+    const isDisabled = !item.stock;
     const nonActiveText = text ? text : "В корзину";
     const activeText = "Уже в корзине"
     
@@ -32,7 +37,7 @@ const CartIcon = ({
             </Component>
         </RouteLink>
     ) : (
-        <Component {...componentProps} onClick={handleClick}>
+        <Component {...componentProps} disabled={isDisabled} onClick={handleClick}>
             <ShoppingCartOutlinedIcon sx={{ mr: 1 }} />
             <Typography variant="body1" {...props}>{nonActiveText}</Typography>
         </Component>

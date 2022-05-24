@@ -1,6 +1,6 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { getCartFromLocalStorage } from "../../actions/cart";
+import React, { useCallback, useEffect, useState } from "react";
+import { deleteItemFromCartInLocalStorage, getCartFromLocalStorage } from "../../actions/cart";
 import { formatPrice } from "../../utils/product";
 import CartItem from "./CartItem";
 
@@ -22,13 +22,30 @@ const Cart = () => {
         if (itemsData && itemsData.length !== 0) {
             fetch(`/api/items/instances?id=${itemsData.map(item => item.id).join(';')}`)
                 .then(res => res.json())
-                .then(data => setItems(data))
+                .then(data => setItems(
+                    data.map((d, i) => ({ ...d, amount: itemsData[i].amount }))
+                ))
                 .catch(e => console.log(e));
         }
     }, [itemsData]);
 
-    const totalAmount = itemsData && itemsData.map(i => i.amount).reduce((a, b) => a + b, 0);
-    const totalPrice = items && items.map((item, i) => item.item.price * itemsData[i].amount)
+    const handleCloseClick = item => () => {
+        const itemIndex = deleteItemFromCartInLocalStorage(item);
+        
+        if (itemIndex !== -1) {
+            setItems(prev => {
+                const newItems = [...prev];
+                newItems.splice(itemIndex, 1);
+
+                return newItems;
+            });
+        }
+        
+    }
+
+    const totalAmount = items && items.map(i => i.amount)
+        .reduce((a, b) => a + b, 0);
+    const totalPrice = items && items.map((item, i) => item.item.price * item.amount)
         .reduce((a, b) => a + b, 0);
 
     return (
@@ -41,7 +58,8 @@ const Cart = () => {
                             <CartItem 
                                 key={i} 
                                 itemInstance={item} 
-                                amount={itemsData[i].amount} 
+                                amount={item.amount}
+                                closeClick={handleCloseClick(item)}
                             />
                         )}
                     </Stack>
@@ -59,7 +77,7 @@ const Cart = () => {
                 </>
             ) : itemsData && (
                 <Box>
-                    <Typography variant="h5">Корзина пуста</Typography>
+                    <Typography variant="h6">Корзина пуста</Typography>
                 </Box>
             )}
         </Box>

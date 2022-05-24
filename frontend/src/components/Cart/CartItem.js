@@ -1,14 +1,15 @@
-import { Box, Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, CardMedia, Typography, IconButton } from "@mui/material";
 import React, { useState } from "react";
 import { formatPrice } from "../../utils/product";
 import RouteLink from "../DOM/RouteLink";
+import CloseIcon from '@mui/icons-material/Close';
 
 
-const CartItem = ({ itemInstance, amount }) => {
+const CartItem = ({ itemInstance, amount, closeClick }) => {
     const totalPrice = itemInstance.item.price * amount;
 
     return (
-        <Card sx={{ display: 'flex', p: 1, height: 200 }}>
+        <Card sx={{ display: 'flex', p: 1, height: 200, position: 'relative' }}>
             <CardMedia
                 component="img"
                 image={itemInstance.image}
@@ -46,7 +47,7 @@ const CartItem = ({ itemInstance, amount }) => {
                         </Box>
                     </Box>
                     <Box>
-                        <Box>
+                        <Box sx={{ py: 1 }}>
                             <Typography 
                                 component="div" 
                                 variant="subtitle2" 
@@ -83,6 +84,20 @@ const CartItem = ({ itemInstance, amount }) => {
                     </Button>
                 </Box>
             </Box>
+            <IconButton 
+                aria-label="Удалить" 
+                sx={{ 
+                    position: 'absolute', 
+                    right: '-5px', 
+                    top: '-5px', 
+                    fontSize: '1.25em',
+                    backgroundColor: '#eee',
+                    '& > svg': { 'fontSize': '1em' }
+                }}
+                onClick={closeClick}
+            >
+                <CloseIcon />
+            </IconButton>
         </Card>
     )
 }

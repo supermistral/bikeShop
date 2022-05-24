@@ -54,3 +54,16 @@ export const cartLocalStorageContainsItem = item => {
 
     return cart.findIndex(c => c.id === item.id) !== -1;
 }
+
+
+export const deleteItemFromCartInLocalStorage = item => {
+    let cart = getCartFromLocalStorage();
+    const cartItemIndex = cart.findIndex(c => c.id === item.id);
+
+    if (cartItemIndex !== -1) {
+        cart.splice(cartItemIndex, 1);
+        saveCartInLocalStorage(cart);
+    }
+
+    return cartItemIndex;
+} 

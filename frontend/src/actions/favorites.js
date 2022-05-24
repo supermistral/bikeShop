@@ -39,8 +39,6 @@ export const toggleItemInFavoritesLocalStorage = id => {
 
     const isAdded = idIndex !== -1;
 
-    console.log(idIndex, isAdded);
-
     if (isAdded) {
         favorites.ids.splice(idIndex, 1);
     } else {
