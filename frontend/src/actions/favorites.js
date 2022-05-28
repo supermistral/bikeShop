@@ -27,15 +27,15 @@ export const addItemToFavoritesInLocalStorage = item => {
 }
 
 
-export const favoritesLocalStorageContainsItem = id => {
+export const favoritesLocalStorageContainsItem = item => {
     const favorites = getFavoritesFromLocalStorage();
-    return favorites.ids.indexOf(id) !== -1;
+    return favorites.ids.indexOf(item.id) !== -1;
 }
 
 
-export const toggleItemInFavoritesLocalStorage = id => {
+export const toggleItemInFavoritesLocalStorage = item => {
     const favorites = getFavoritesFromLocalStorage();
-    const idIndex = favorites.ids.indexOf(id);
+    const idIndex = favorites.ids.indexOf(item.id);
 
     const isAdded = idIndex !== -1;
 
@@ -45,7 +45,7 @@ export const toggleItemInFavoritesLocalStorage = id => {
         if (!Array.isArray(favorites.ids))
             favorites.ids = [];
 
-        favorites.ids.push(id);
+        favorites.ids.push(item.id);
     }
 
     saveFavoritesInLocalStorage(favorites);

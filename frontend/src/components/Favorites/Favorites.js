@@ -31,6 +31,7 @@ const Favorites = () => {
 
     return (
         <Box>
+            <Typography variant="h4" sx={{ py: 2 }}>Избранное</Typography>
             {items ? (
                 <Grid
                     container
@@ -48,8 +49,6 @@ const Favorites = () => {
                 <Box sx={{ 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    alignItems: 'center',
-                    p: 2
                 }}>
                     <Typography variant="h6">Избранное пусто</Typography>
                     <Typography variant="body1">

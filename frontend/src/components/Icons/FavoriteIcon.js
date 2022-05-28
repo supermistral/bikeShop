@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { default as FavoriteFilledIcon } from '@mui/icons-material/Favorite';
 import { favoritesLocalStorageContainsItem, toggleItemInFavoritesLocalStorage } from "../../actions/favorites";
 
 
 const FavoriteIcon = ({ item, component, componentProps, ...props }) => {
-    const itemId = item.id.toString();
     const Component = component;
 
     const [active, setActive] = useState(
-        favoritesLocalStorageContainsItem(itemId)
+        favoritesLocalStorageContainsItem(item)
     );
 
+    useEffect(() => {
+        setActive(favoritesLocalStorageContainsItem(item))
+    }, [item]);
+
     const handleClick = () => {
-        setActive(toggleItemInFavoritesLocalStorage(itemId))
+        setActive(toggleItemInFavoritesLocalStorage(item))
     }
     
     return (
