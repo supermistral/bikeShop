@@ -49,10 +49,6 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToOne(mappedBy = "user")
-    @JsonIgnore
-    private Client client;
-
     public User(String email, String name, String password) {
         this.email = email;
         this.name = name;
