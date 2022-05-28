@@ -3,6 +3,7 @@ import React from "react";
 import SearchBar from "./SearchBar";
 import Options from "./Options";
 import Menu from "./Menu/Menu";
+import RouteLink from "../DOM/RouteLink";
 
 
 const Header = ({ categories }) => {
@@ -13,9 +14,11 @@ const Header = ({ categories }) => {
                 spacing={2}
                 sx={{ justifyContent: 'center', py: 2 }}
             >
-                <Typography sx={{ fontSize: "30px" }}>
-                    Bike Shop
-                </Typography>
+                <RouteLink to="/" color="inherit">
+                    <Typography sx={{ fontSize: "30px" }}>
+                        Bike Shop
+                    </Typography>
+                </RouteLink>
                 <SearchBar />
                 <Options />
             </Stack>

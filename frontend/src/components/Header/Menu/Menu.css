@@ -7,6 +7,10 @@
     position: relative;
 }
 
+.menu > .menu-item > .menu-multi-item:hover > .menu-item-container {
+    transition-delay: .5s;
+}
+
 .menu-item {
     /* background-color: rgb(255, 204, 138); */
     padding: 1em 0;
@@ -40,12 +44,16 @@
     opacity: 0;
     transform: translateY(-20%);
     transition: all .2s ease;
-    transition-delay: .5s;
+    transition-delay: .2s;
 }
 
-.menu-multi-item {
-    /* position: relative; */
-    /* height: 3em; */
+.menu .menu-item-container:hover {
+    transition-delay: 10s;
+}
+
+.menu-multi-item > * {
+    display: flex;
+    justify-content: stretch;
 }
 
 .menu-multi-item:hover > .menu-item-container {

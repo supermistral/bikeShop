@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { Box, Grid, Link, Typography } from "@mui/material";
 import React from "react";
+import RouteLink from "../../DOM/RouteLink";
 
 
 const Img = styled('img')({
@@ -16,10 +17,10 @@ const MenuItem = ({ item, first, style }) => {
     const hasChild = item.children.length !== 0;
 
     return (
-        <Link 
-            key={item.id} 
+        <RouteLink 
+            key={item.id}
+            to={`/catalog/${item.id}/items`}
             style={style} 
-            href="#" 
             color="inherit" 
             className="menu-item" 
             underline="none"
@@ -53,7 +54,7 @@ const MenuItem = ({ item, first, style }) => {
                     </div>
                 }
             </Box>
-        </Link>
+        </RouteLink>
     );
 }
 

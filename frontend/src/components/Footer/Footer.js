@@ -34,6 +34,14 @@ const Footer = () => {
                     '& a': { my: 0.25, color: '#666' }
                 }}
             >
+                <Box>
+                    <Typography variant="h4" component="div">Bike Shop</Typography>
+                    <Typography variant="subtitle2">+7 123 456 78 90</Typography>
+                    <Box sx={{ px: 1, my: 1, borderLeft: '10px solid #ccc', }}>
+                        <Typography variant="body2">г.Москва, пр-т Вернадского, 78</Typography>
+                        <Typography variant="body2">ПН - СБ с 10:00 до 20:00</Typography>
+                    </Box>
+                </Box>
                 <Stack>
                     <SubdivisionTypography variant="h5">Поддержка</SubdivisionTypography>
                     <Link component={RouterLink} to="/catalog" underline="hover" variant="body2">Каталог</Link>

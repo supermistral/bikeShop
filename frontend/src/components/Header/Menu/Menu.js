@@ -7,14 +7,6 @@ import "./Menu.css";
 
 
 const Menu = ({ categories }) => {
-    // const [categories, setCategories] = useState();
-
-    // useEffect(() => {
-    //     fetch("/api/category")
-    //         .then(res => res.json())
-    //         .then(data => setCategories(data))
-    //         .catch(e => console.log(e));
-    // }, []);
     
     return (
         <Stack 
