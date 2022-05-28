@@ -13,11 +13,39 @@ import Login from "./components/Authorization/Login/Login";
 import Registration from "./components/Authorization/Registration/Registration";
 import axiosInstance from "./constants/axios";
 import Logout from "./components/Authorization/Logout/Logout";
+import OrderList from "./components/Profile/OrderList/OrderList";
+
+
+const getUserAuthData = () => {
+    const accessToken = window.localStorage.getItem("accessToken");
+        
+    if (accessToken === null)
+        return { isAuthorized: false };
+
+    const tokenParts = JSON.parse(atob(accessToken.split('.')[1]));
+    const roles = tokenParts.roles?.map(role => {
+        switch (role) {
+            case "ROLE_MANAGER":
+                return "manager";
+            case "ROLE_ADMIN":
+                return "admin";
+            default:
+                return "user";
+        }
+    });
+
+    const isAuthorized = Array.isArray(roles) && roles.length > 0;
+
+    return {
+        roles: roles,
+        isAuthorized: isAuthorized,
+    }
+}
 
 
 const App = () => {
     const [categories, setCategories] = useState();
-    const [userAuthData, setUserAuthData] = useState({ isAuthorized: false }); 
+    const [userAuthData, setUserAuthData] = useState(getUserAuthData()); 
 
     useEffect(() => {
         fetch("/api/category")
@@ -27,28 +55,7 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        const accessToken = window.localStorage.getItem("accessToken");
-        
-        if (accessToken === null)
-            return;
-
-        const tokenParts = JSON.parse(atob(accessToken.split('.')[1]));
-
-        setUserAuthData(() => {
-            const roles = tokenParts.roles?.map(role => {
-                switch (role) {
-                    case "ROLE_ADMIN":
-                        return "admin"
-                    default:
-                        return "user"
-                }
-            });
-            const isAuthorized = Array.isArray(roles) && roles.length > 0;
-            return {
-                roles: roles,
-                isAuthorized: isAuthorized,
-            }
-        });
+        setUserAuthData(getUserAuthData());
 
     }, [axiosInstance.defaults.headers['Authorization']])
 

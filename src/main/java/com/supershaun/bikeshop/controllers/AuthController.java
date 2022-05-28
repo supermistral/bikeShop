@@ -118,6 +118,12 @@ public class AuthController {
                         roles.add(adminRole);
                         break;
 
+                    case "manager":
+                        Role managerRole = roleRepository.findByName(ERole.ROLE_MANAGER)
+                                .orElseThrow(() -> new RoleNotFoundException());
+                        roles.add(managerRole);
+                        break;
+
                     default:
                         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RoleNotFoundException());

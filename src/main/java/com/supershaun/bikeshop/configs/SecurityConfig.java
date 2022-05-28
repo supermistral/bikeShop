@@ -50,8 +50,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .and().authorizeRequests().antMatchers(HttpMethod.GET, "/api/items/**", "/api/category/**", "/media/**").permitAll()
-                .and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/items/**", "/api/category/**").hasAnyAuthority("ROLE_ADMIN")
-                    .anyRequest().authenticated()
+                .and().authorizeRequests().antMatchers(
+                        "/api/items/**",
+                        "/api/itemInstances/**",
+                        "/api/itemInstanceSpecifications/**",
+                        "/api/itemSpecifications/**",
+                        "/api/orders/status/**",
+                        "/api/orders/all").hasRole("MANAGER")
+                .and().authorizeRequests().antMatchers(
+                "/api/category/**",
+                        "/api/users/**",
+                        "/api/categorySpecifications/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
                 .and().addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 

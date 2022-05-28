@@ -1,5 +1,7 @@
 package com.supershaun.bikeshop.security.jwt;
 
+import com.supershaun.bikeshop.exceptions.TokenExpiredException;
+import com.supershaun.bikeshop.exceptions.TokenRefreshException;
 import com.supershaun.bikeshop.security.JwtUserDetails;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,10 +49,20 @@ public class JwtUtils {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
+    public String getUserNameFromAuthorizationHeader(String header) {
+        if (!header.startsWith("Bearer ")) {
+            throw new TokenRefreshException(header, "Token is not valid");
+        }
+
+        return getUserNameFromJwtToken(header.substring(7));
+    }
+
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
+        } catch (ExpiredJwtException ex) {
+            throw new TokenExpiredException();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

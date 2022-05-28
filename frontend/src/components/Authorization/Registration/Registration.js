@@ -10,7 +10,7 @@ import { Navigate } from "react-router-dom";
 
 const Registration = () => {
     const [formData, setFormData] = useState();
-    const [successful, setSuccessful] = useState(true);
+    const [successful, setSuccessful] = useState(false);
     const [formErrorData, setFormErrorData] = useState();
 
     const { isAuthorized } = useContext(UserAuthContext);
@@ -28,7 +28,8 @@ const Registration = () => {
 
         axiosInstance
             .post('/auth/signup', formData)
-            .then(res => setSuccessful(true));
+            .then(res => setSuccessful(true))
+            .catch(err => setFormData(prev => ({ ...prev, password: null })));
     }
 
     return (

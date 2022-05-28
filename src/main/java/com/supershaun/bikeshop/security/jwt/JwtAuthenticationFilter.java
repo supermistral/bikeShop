@@ -1,5 +1,7 @@
 package com.supershaun.bikeshop.security.jwt;
 
+import com.supershaun.bikeshop.exceptions.TokenExpiredException;
+import com.supershaun.bikeshop.exceptions.TokenRefreshException;
 import com.supershaun.bikeshop.services.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (TokenExpiredException ex) {
+            request.setAttribute("expired", ex.getMessage());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
