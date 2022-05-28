@@ -56,4 +56,12 @@ public class Category {
         this.parent = parent;
         this.image = image;
     }
+
+    public static int getChildrenSize(Category category) {
+        int size = category.getChildren().size();
+        for (Category child : category.getChildren()) {
+            size += getChildrenSize(child);
+        }
+        return size;
+    }
 }

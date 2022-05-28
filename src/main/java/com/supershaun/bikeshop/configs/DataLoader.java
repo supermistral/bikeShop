@@ -277,10 +277,11 @@ public class DataLoader implements ApplicationRunner {
 
         ItemImage itemImage11 = new ItemImage(itemImagePath, itemInstance11);
         ItemImage itemImage12 = new ItemImage(itemImagePath, itemInstance12);
+        ItemImage itemImage13 = new ItemImage(itemImagePath, itemInstance13);
         ItemImage itemImage2 = new ItemImage(itemImagePath, itemInstance2);
         ItemImage itemImage3 = new ItemImage(itemImagePath, itemInstance3);
         itemImageRepository.saveAll(Arrays.asList(
-                itemImage11, itemImage12, itemImage2, itemImage3
+                itemImage11, itemImage12, itemImage13, itemImage2, itemImage3
         ));
 
         userLoader();
@@ -290,8 +291,9 @@ public class DataLoader implements ApplicationRunner {
         // Roles
         Role roleAdmin = new Role(ERole.ROLE_ADMIN);
         Role roleUser = new Role(ERole.ROLE_USER);
+        Role roleManager = new Role(ERole.ROLE_MANAGER);
         roleRepository.saveAll(Arrays.asList(
-                roleAdmin, roleUser
+                roleAdmin, roleUser, roleManager
         ));
 
         // Users
@@ -300,7 +302,13 @@ public class DataLoader implements ApplicationRunner {
                 "admin",
                 passwordEncoder.encode("adminadmin")
         );
-        userAdmin.setRoles(Set.of(roleUser, roleAdmin));
+        userAdmin.setRoles(Set.of(roleUser, roleAdmin, roleManager));
+        User userManager = new User(
+                "manager@mail.ru",
+                "manager",
+                passwordEncoder.encode("manager")
+        );
+        userManager.setRoles(Set.of(roleUser, roleManager));
         User userSimple = new User(
                 "user@mail.ru",
                 "user",
@@ -308,7 +316,7 @@ public class DataLoader implements ApplicationRunner {
         );
         userSimple.setRoles(Set.of(roleUser));
         userRepository.saveAll(Arrays.asList(
-                userAdmin, userSimple
+                userAdmin, userSimple, userManager
         ));
     }
 }

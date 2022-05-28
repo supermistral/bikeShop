@@ -6,10 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -55,5 +53,18 @@ public class ImageController {
         return ResponseEntity.ok()
                 .contentType(mediaType)
                 .body(image);
+    }
+
+    @PostMapping("upload/itemInstance")
+    public ResponseEntity<?> uploadItemImage(@RequestParam("image") MultipartFile file,
+                                             @RequestParam("itemInstanceId") Long id) {
+        try {
+            imageService.saveToItemInstance(file.getBytes(), file.getOriginalFilename(), id);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return ResponseEntity.noContent().build();
     }
 }

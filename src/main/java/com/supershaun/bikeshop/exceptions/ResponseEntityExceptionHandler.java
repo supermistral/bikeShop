@@ -1,10 +1,12 @@
 package com.supershaun.bikeshop.exceptions;
 
 import com.supershaun.bikeshop.responses.DefaultMessageEntity;
+import com.supershaun.bikeshop.responses.Messages;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +31,22 @@ public class ResponseEntityExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> badCredentialExceptionHandling(Exception exception, WebRequest webRequest) {
+        return new ResponseEntity<>(
+                new DefaultMessageEntity(Messages.BadCredentials.toString()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<?> illegalStateExceptionHandling(Exception exception, WebRequest request) {
+        return new ResponseEntity<>(
+                new DefaultMessageEntity(exception.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
     @ExceptionHandler({ EmailAlreadyInUseException.class })
     public ResponseEntity<?> authExceptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(
@@ -36,15 +55,15 @@ public class ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler(TokenRefreshException.class)
+    @ExceptionHandler({ TokenRefreshException.class, TokenExpiredException.class })
     public ResponseEntity<?> tokenRefreshExceptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(
                 new DefaultMessageEntity(exception.getMessage()),
-                HttpStatus.FORBIDDEN
+                HttpStatus.UNAUTHORIZED
         );
     }
 
-    @ExceptionHandler({ CategoryNotFoundException.class, ItemNotFoundException.class })
+    @ExceptionHandler({ EntityNotFoundException.class, CategoryNotFoundException.class, ItemNotFoundException.class })
     public ResponseEntity<?> categoryNotFoundExceptionHandling(Exception exception, WebRequest request) {
         return new ResponseEntity<>(
                 new DefaultMessageEntity(exception.getMessage()),

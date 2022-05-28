@@ -18,7 +18,6 @@ public class ItemDetailDto {
     private List<ItemSpecificationDto> specifications;
     private String description;
     private double price;
-    private Company company;
 
     @Getter
     @Setter
@@ -66,14 +65,20 @@ public class ItemDetailDto {
                 .map(i -> new ItemInstanceDto(i))
                 .collect(Collectors.toList());
         specifications = item.getSpecifications().stream()
+                .sorted((o1, o2) -> {
+                    if (o1.getCategorySpecification().getCategory().getId()
+                            == o2.getCategorySpecification().getCategory().getId())
+                        return o1.getCategorySpecification().getName()
+                                .compareTo(o2.getCategorySpecification().getName());
+                    return Category.getChildrenSize(o2.getCategorySpecification().getCategory())
+                            - Category.getChildrenSize(o1.getCategorySpecification().getCategory());
+                })
                 .map(i -> new ItemSpecificationDto(
                         i.getCategorySpecification().getName(),
                         i.getValue()
                 ))
-                .sorted(Comparator.comparing(ItemSpecificationDto::getKey))
                 .collect(Collectors.toList());
         description = item.getDescription();
         price = item.getPrice();
-        company = item.getCompany();
     }
 }

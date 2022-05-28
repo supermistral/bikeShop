@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.core.annotation.Order;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,13 +24,12 @@ public class ItemInstance {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
-    @NotNull
     @JsonIgnore
     private Item item;
 
-    @OneToMany(mappedBy = "itemInstance")
+    @OneToMany(mappedBy = "itemInstance", cascade = CascadeType.ALL)
     @OrderBy("id")
     private Set<ItemInstanceSpecification> specifications;
 
@@ -37,7 +38,8 @@ public class ItemInstance {
 
     @OneToMany(mappedBy = "itemInstance", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({ "id", "itemInstance" })
-    private Set<ItemImage> images;
+    @OrderBy("id")
+    private Set<ItemImage> images = new HashSet<>();
 
     public ItemInstance(Item item, int stock) {
         this.item = item;

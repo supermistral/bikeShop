@@ -23,7 +23,7 @@ public class ItemImage {
     private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    @JoinColumn(name = "item_instance_id", referencedColumnName = "id")
     private ItemInstance itemInstance;
 
     public static String imagePath = "items/";

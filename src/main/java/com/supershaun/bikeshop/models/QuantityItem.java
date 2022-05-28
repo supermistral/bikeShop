@@ -21,11 +21,7 @@ public class QuantityItem {
 
     @ManyToOne
     @JoinColumn(name = "item_id")
-    private Item item;
-
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
+    private ItemInstance itemInstance;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -34,4 +30,10 @@ public class QuantityItem {
     @Column(name = "quantity")
     @Min(value = 1)
     private int quantity;
+
+    public QuantityItem(ItemInstance itemInstance, Order order, int quantity) {
+        this.itemInstance = itemInstance;
+        this.order = order;
+        this.quantity = quantity;
+    }
 }

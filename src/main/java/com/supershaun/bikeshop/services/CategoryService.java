@@ -7,15 +7,23 @@ import com.supershaun.bikeshop.models.ItemSpecification;
 import com.supershaun.bikeshop.models.dto.CategoryDetailDto;
 import com.supershaun.bikeshop.models.dto.CategoryWithoutChildrenDto;
 import com.supershaun.bikeshop.models.dto.ItemDetailDto;
+import com.supershaun.bikeshop.models.dto.request.CategoryAdminRequestDto;
+import com.supershaun.bikeshop.models.dto.response.CategoryAdminResponseDto;
 import com.supershaun.bikeshop.repositories.CategoryRepository;
 import com.supershaun.bikeshop.repositories.CategorySpecificationRepository;
+import com.supershaun.bikeshop.repositories.ImageRepository;
+import com.supershaun.bikeshop.repositories.ItemRepository;
 import com.supershaun.bikeshop.services.interfaces.ICategoryService;
 import com.supershaun.bikeshop.utils.SpecificationParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class CategoryService implements ICategoryService {
@@ -25,6 +33,9 @@ public class CategoryService implements ICategoryService {
     @Autowired
     private CategorySpecificationRepository categorySpecificationRepository;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
     @Override
     public List<Category> getAllWithDepth() {
         return categoryRepository.findAll().stream()
@@ -33,9 +44,9 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public List<CategoryWithoutChildrenDto> getAll() {
+    public List<CategoryAdminResponseDto> getAll() {
         return categoryRepository.findAll().stream()
-                .map(CategoryWithoutChildrenDto::new)
+                .map(CategoryAdminResponseDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -124,6 +135,92 @@ public class CategoryService implements ICategoryService {
         return filterAndSort(items);
     }
 
+    @Override
+    @Transactional
+    public CategoryAdminResponseDto update(Long id, CategoryAdminRequestDto dto, byte[] image) {
+        Category category = categoryRepository.getById(id);
+        Category parent = null;
+
+        if (dto.getParentId() != null && categoryRepository.existsById(dto.getParentId())) {
+            parent = categoryRepository.getById(dto.getParentId());
+        }
+
+        if (image != null) {
+            String imageName;
+            try {
+                imageName = imageRepository.save(
+                        image,
+                        Paths.get(Category.imagePath, dto.getImage()).toString()
+                );
+            } catch (Exception ex) {
+                imageName = null;
+            }
+
+            if (imageName != null) {
+                try {
+                    imageRepository.deleteByName(category.getImage());
+                } catch (Exception ex) {}
+
+                category.setImage(imageName);
+            }
+        }
+
+        category.setParent(parent);
+        category.setName(dto.getName());
+        categoryRepository.saveAndFlush(category);
+
+        return new CategoryAdminResponseDto(category);
+    }
+
+    @Override
+    @Transactional
+    public CategoryAdminResponseDto create(CategoryAdminRequestDto dto, byte[] image) {
+        Category parent;
+        Long parentId = dto.getParentId();
+
+        if (parentId == null) {
+            parent = null;
+        } else {
+            parent = categoryRepository.getById(dto.getParentId());
+        }
+
+        String imageName = null;
+
+        if (image != null) {
+            try {
+                imageName = imageRepository.save(
+                        image,
+                        Paths.get(Category.imagePath, dto.getImage()).toString()
+                );
+            } catch (Exception ex) {}
+        }
+
+        Category category = new Category(
+                dto.getName(),
+                parent,
+                imageName
+        );
+        categoryRepository.saveAndFlush(category);
+
+        return new CategoryAdminResponseDto(category);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Category category = categoryRepository.getById(id);
+
+        if (category.getImage() != null && !category.getImage().isEmpty()) {
+            try {
+                imageRepository.deleteByName(
+                        Paths.get(Category.imagePath, category.getImage()).toString()
+                );
+            } catch (Exception ex) {}
+        }
+
+        categoryRepository.deleteById(id);
+    }
+
     private List<Item> filterByCategorySpecificationId(
             List<Item> items,
             Long categorySpecificationId,
@@ -168,8 +265,15 @@ public class CategoryService implements ICategoryService {
     }
 
     public static List<Item> filterAndSort(List<Item> items) {
-        return items.stream()
-                .sorted((item1, item2) -> (int) (item1.getPrice() - item2.getPrice()))
+        Stream<Item> itemsInStock = items.stream()
+                .filter(item -> item.getStock() != 0)
+                .sorted((item1, item2) -> (int) (item1.getPrice() - item2.getPrice()));
+
+        Stream<Item> itemsNotStock = items.stream()
+                .filter(item -> item.getStock() == 0)
+                .sorted((item1, item2) -> (int) (item1.getPrice() - item2.getPrice()));
+
+        return Stream.concat(itemsInStock, itemsNotStock)
                 .collect(Collectors.toList());
     }
 }

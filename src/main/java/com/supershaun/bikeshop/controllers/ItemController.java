@@ -2,6 +2,8 @@ package com.supershaun.bikeshop.controllers;
 
 import com.supershaun.bikeshop.exceptions.ItemNotFoundException;
 import com.supershaun.bikeshop.models.dto.ItemDetailDto;
+import com.supershaun.bikeshop.models.dto.request.ItemAdminRequestDto;
+import com.supershaun.bikeshop.models.dto.request.ItemSpecificationAdminRequestDto;
 import com.supershaun.bikeshop.responses.DefaultMessageEntity;
 import com.supershaun.bikeshop.responses.Messages;
 import com.supershaun.bikeshop.services.interfaces.IItemService;
@@ -57,5 +59,22 @@ public class ItemController {
         }
 
         return ResponseEntity.ok(itemService.getAllInstancesByIds(ids));
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<?> update(@PathVariable("id") Long id,
+                                    @RequestBody ItemAdminRequestDto dto) {
+        return ResponseEntity.ok(itemService.update(id, dto));
+    }
+
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody ItemAdminRequestDto dto) {
+        return ResponseEntity.ok(itemService.create(dto));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        itemService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

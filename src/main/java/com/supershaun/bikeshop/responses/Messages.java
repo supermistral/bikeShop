@@ -6,7 +6,9 @@ public enum Messages {
     UserRegistredSuccessfully("User registered successfully"),
     LogoutSuccessfully("User logout successfully"),
     EmailAlreadyInUse("Email already in use"),
-    RoleNotFoundException("Role not found");
+    RoleNotFoundException("Role not found"),
+    OrderStatusSuccessfully("Order status successfully was changed"),
+    BadCredentials("Incorrect e-mail or password");
 
     private final String name;
 
