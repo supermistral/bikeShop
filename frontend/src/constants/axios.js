@@ -29,40 +29,57 @@ axiosInstance.interceptors.response.use(
             return Promise.reject(error);
         }
 
+        const statusCode = error.response.status;
+        const message = error.response.data.message.toLowerCase();
+
         if (
-            error.response.status === 401 &&
-            originalRequest.url === '/api/auth/token'
+            statusCode === 401 &&
+            message.includes("refresh token was expired")
         ) {
-            window.location.href = '/';
+            console.log('Refresh token is expired');
+            window.location.href = '/logout';
         }
 
         if (
-            error.response.status === 401 ||
-            error.response.status === 403
+            statusCode === 401 &
+            message.includes("is not in database")
+        ) {
+            removeAuthorizationData('/login');
+        }
+
+        // if (
+        //     error.response.status === 401 &&
+        //     originalRequest.url === '/api/auth/token'
+        // ) {
+        //     window.location.href = '/';
+        // }
+
+        console.log(message, statusCode);
+
+        if (
+            statusCode === 401 &&
+            message.includes("token was expired")
         ) {
             const refreshToken = window.localStorage.getItem('refreshToken');
 
             if (refreshToken) {
-                const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
-                const now = Math.ceil(Date.now() / 1000);
+                return axiosInstance
+                    .post('/auth/token', { refreshToken: refreshToken })
+                    .then(res => {
+                        window.localStorage.setItem('refreshToken', res.data.refreshToken);
+                        window.localStorage.setItem('accessToken', res.data.accessToken);
 
-                if (tokenParts.exp > now) {
-                    return axiosInstance
-                        .post('/auth/token', { refreshToken: refreshToken })
-                        .then(res => {
-                            window.localStorage.setItem('refreshToken', res.data.refreshToken);
-                            window.localStorage.setItem('accessToken', res.data.accessToken);
+                        axiosInstance.defaults.headers['Authorization'] = 
+                            res.data.tokenType + " " + res.data.accessToken;
+                        originalRequest.headers['Authorization'] = 
+                            res.data.tokenType + " " + res.data.accessToken;
 
-                            axiosInstance.defaults.headers['Authorization'] = 
-                                res.data.tokenType + " " + res.data.accessToken;
-                            originalRequest.headers['Authorization'] = 
-                                res.data.tokenType + " " + res.data.accessToken;
-                        })
-                        .catch(err => removeAuthorizationData());
-                } else {
-                    console.log('Refresh token is expired', tokenParts.exp, now);
-                    removeAuthorizationData();
-                }
+                        window.location.href = window.location.href;
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        removeAuthorizationData();
+                    });
             } else {
                 console.log('Refresh token not available.');
                 removeAuthorizationData();
@@ -74,11 +91,11 @@ axiosInstance.interceptors.response.use(
 )
 
 
-export const removeAuthorizationData = () => {
+export const removeAuthorizationData = (path = "/") => {
     axiosInstance.defaults.headers['Authorization'] = null;
     ['accessToken', 'refreshToken'].forEach(key => window.localStorage.removeItem(key));
     
-    window.location.href = '/'
+    window.location.href = path;
 }
 
 export const addAuthorizationData = (data) => {
