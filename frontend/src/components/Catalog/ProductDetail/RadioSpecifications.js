@@ -172,6 +172,10 @@ const createInstancesSpecifications = instances => {
 const calculateValuesChoices = (specifications, index = 0, newValue = null, values = null) => {
     let resultValues, 
         instanceIds;
+
+    if (specifications.length === 0) {
+        return null;
+    }
     
     if (values) {
         resultValues = [...values];
@@ -203,7 +207,13 @@ const calculateValuesChoices = (specifications, index = 0, newValue = null, valu
 const RadioSpecifications = ({ instances, setInstanceId, item }) => {
     const specifications = createInstancesSpecifications(instances);
 
-    const [valueChoices, setValueChoices] = useState(calculateValuesChoices(specifications));
+    const [valueChoices, setValueChoices] = useState(
+        calculateValuesChoices(specifications) || [{
+            instanceIds: [instances[0].id],
+        }]
+    );
+
+    console.log(valueChoices)
 
     const updateValueChoices = index => value => {
         const specValue = specifications[index].values.find(v => v.value === value);
@@ -219,6 +229,8 @@ const RadioSpecifications = ({ instances, setInstanceId, item }) => {
 
     const instanceIds = calculateInstanceIds(valueChoices);
     let stock = true;
+
+    // console.log(valueChoices);
     
     if (instanceIds.length === 1) {
         const instanceId = instanceIds[0];

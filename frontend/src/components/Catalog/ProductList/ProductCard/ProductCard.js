@@ -14,7 +14,7 @@ import { formatPrice } from "../../../../utils/product";
 
 const ProductCard = ({ item }) => {
     return (
-        <Card sx={{ width: '100%' }}>
+        <Card sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'stretch',  width: '100%', height: 350 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 1 }}>
                 <Chip
                     sx={{ py: 1, fontSize: '0.75em' }}
@@ -40,18 +40,19 @@ const ProductCard = ({ item }) => {
                     }}
                 />
             </Box>
-            <CardActionArea>
+            <CardActionArea sx={{ flex: 1 }}>
                 <Link 
                     component={RouteLink} 
                     to={getItemByIdUrl(item.id)}
-                    sx={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+                    sx={{ textDecoration: 'none', color: 'inherit' }}
                 >
                     <CardMedia
                         component="img"
                         image={item.image}
                         alt={item.name}
+                        sx={{ height: 180, width: '100%', objectFit: 'contain' }}
                     />
-                    <CardContent sx={{ pb: 0 }}>
+                    <CardContent sx={{ paddingBottom: '16px !important' }}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{item.name}</Typography>
                         <Typography variant="body2"></Typography>
                         
@@ -62,7 +63,7 @@ const ProductCard = ({ item }) => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 p: 0,
-                borderTop: '1px solid #ddd'
+                borderTop: '1px solid #ddd',
             }}>
                 <Typography variant="subtitle1" sx={{ backgroundColor: '#eef', px: 2, py: 0.5 }}>
                     {formatPrice(item.price)} ₽

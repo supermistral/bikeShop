@@ -25,7 +25,7 @@ const ProductList = () => {
             .then(res => res.json())
             .then(data => setItems(data))
             .catch(e => console.log(e));
-    }, [searchParams]);
+    }, [searchParams, categoryId]);
 
     return (
         <Box sx={{ display: 'flex' }}>
