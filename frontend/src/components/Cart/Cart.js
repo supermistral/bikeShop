@@ -1,21 +1,26 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
-import { deleteItemFromCartInLocalStorage, getCartFromLocalStorage } from "../../actions/cart";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import { changeItemInCartInLocalStorage, cleanCartInLocalStorage, deleteItemFromCartInLocalStorage, getCartFromLocalStorage } from "../../actions/cart";
+import axiosInstance from "../../constants/axios";
 import { formatPrice } from "../../utils/product";
 import CartItem from "./CartItem";
+import RouteLink from "../DOM/RouteLink";
+import UserAuthContext from "../DOM/UserAuthContext";
+import AuthorizationAlert from "../Authorization/AuthorizationAlert/AuthorizationAlert";
 
 
 const Cart = () => {
-    const isAuthorized = false;
+    const { isAuthorized } = useContext(UserAuthContext);
 
     const [itemsData, setItemsData] = useState();
     const [items, setItems] = useState();
+    const [success, setSuccess] = useState(false);
+    const [authAlertOpen, setAuthAlertOpen] = useState(false);
 
     useEffect(() => {
         // Local storage
-        if (!isAuthorized) {
-            setItemsData(getCartFromLocalStorage());
-        }
+        setItemsData(getCartFromLocalStorage());
     }, []);
 
     useEffect(() => {
@@ -39,8 +44,33 @@ const Cart = () => {
 
                 return newItems;
             });
-        }
-        
+        }   
+    }
+
+    const handleAmountChange = item => newAmount => {
+        changeItemInCartInLocalStorage(item, newAmount);
+        setItems(prev => {
+            const newItems = [...prev];
+            newItems[newItems.findIndex(i => i.id === item.id)].amount = newAmount;
+            return newItems;
+        });
+    }
+
+    const handleCreateOrderClick = () => {
+        const quanityItems = items.map(item => ({
+            itemInstance: {
+                id: item.id
+            },
+            quantity: item.amount
+        }));
+
+        axiosInstance
+            .post("orders", quanityItems)
+            .then(res => {
+                cleanCartInLocalStorage();
+                setSuccess(true);
+            })
+            .catch(err => setAuthAlertOpen(true));
     }
 
     const totalAmount = items && items.map(i => i.amount)
@@ -51,15 +81,32 @@ const Cart = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', pb: 1 }}>
             <Typography variant="h4" sx={{ py: 2 }}>Корзина</Typography>
-            {items ? (
+            {success ? (
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <CheckCircleOutlinedIcon color="success" sx={{ 
+                            fontSize: '3em', 
+                            p: 1,
+                            borderRadius: '50%',
+                        }}/>
+                        <Typography component="span" variant="h5">
+                            Заказ успешно создан
+                        </Typography>
+                    <RouteLink to="/profile" sx={{ mt: 2 }}>
+                        <Button variant="outlined">
+                            Мои заказы
+                        </Button>
+                    </RouteLink>
+                </Box>
+            ) : items && items.length !== 0 ? (
                 <>
                     <Stack spacing={2} alignItems="stretch">
                         {items.map((item, i) => 
                             <CartItem 
                                 key={i} 
                                 itemInstance={item} 
-                                amount={item.amount}
+                                itemAmount={item.amount}
                                 closeClick={handleCloseClick(item)}
+                                changeAmount={handleAmountChange(itemsData[i])}
                             />
                         )}
                     </Stack>
@@ -70,7 +117,7 @@ const Cart = () => {
                             <Typography variant="subtitle2">на сумму</Typography>
                             <Typography variant="h6" sx={{ px: 1, fontWeight: 700 }}>{formatPrice(totalPrice)} ₽</Typography>
                         </Box>
-                        <Button variant="contained" size="large">
+                        <Button variant="contained" size="large" onClick={handleCreateOrderClick}>
                             Заказать все
                         </Button>
                     </Box>
@@ -80,6 +127,7 @@ const Cart = () => {
                     <Typography variant="h6">Корзина пуста</Typography>
                 </Box>
             )}
+            {authAlertOpen && <AuthorizationAlert close={() => setAuthAlertOpen(false)} isOpen={true} />}
         </Box>
     )
 }

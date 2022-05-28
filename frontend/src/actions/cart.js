@@ -66,4 +66,9 @@ export const deleteItemFromCartInLocalStorage = item => {
     }
 
     return cartItemIndex;
-} 
+}
+
+
+export const cleanCartInLocalStorage = () => {
+    window.localStorage.removeItem(CART_KEY);
+}

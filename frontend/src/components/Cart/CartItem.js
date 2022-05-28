@@ -1,11 +1,44 @@
-import { Box, Button, Card, CardContent, CardMedia, Typography, IconButton } from "@mui/material";
-import React, { useState } from "react";
+import { Box, Button, Card, CardContent, CardMedia, Typography, IconButton, TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { formatPrice } from "../../utils/product";
 import RouteLink from "../DOM/RouteLink";
 import CloseIcon from '@mui/icons-material/Close';
 
 
-const CartItem = ({ itemInstance, amount, closeClick }) => {
+const CartItem = ({ itemInstance, changeAmount, itemAmount, closeClick }) => {
+    const [amount, setAmount] = useState(itemAmount);
+
+    const handleChange = e => {
+        const value = e.target.value;
+        
+        if (value === "")
+            setAmount(value);
+        
+        if (parseInt(value) === +value) {
+            const intValue = +value;
+            if (intValue <= itemInstance.stock && intValue > 0) {
+                setAmount(intValue);
+            }
+        }
+    }
+
+    const handleBlur = e => {
+        const value = e.target.value;
+        if (parseInt(value) === +value) {
+            const intValue = +value;
+            if (intValue > itemInstance.stock || intValue <= 0)
+                setAmount(itemAmount);
+        } else {
+            setAmount(itemAmount);
+        } 
+    }
+
+    useEffect(() => {
+        if (typeof amount !== "string") {
+            changeAmount(amount);
+        }
+    }, [amount]);
+    
     const totalPrice = itemInstance.item.price * amount;
 
     return (
@@ -55,9 +88,37 @@ const CartItem = ({ itemInstance, amount, closeClick }) => {
                             >
                                 Цена
                             </Typography>
-                            <Typography variant="body1" sx={{ lineHeight: 1, fontSize: '1.2em' }}>
+                            <Typography variant="body1" sx={{ textAlign: 'right', lineHeight: 1, fontSize: '1.2em' }}>
                                 {formatPrice(itemInstance.item.price)} ₽
                             </Typography>
+                        </Box>
+                        <Box>
+                            <Typography 
+                                component="div" 
+                                variant="subtitle2" 
+                                sx={{ textAlign: 'right' }}
+                            >
+                                Количество
+                            </Typography>
+                            <Box sx={{ display: 'flex' }}>
+                                <Typography variant="caption">доступно {itemInstance.stock} шт.</Typography>
+                                <Typography 
+                                    component="div" 
+                                    variant="body1" 
+                                    sx={{ textAlign: 'right', lineHeight: 1, fontSize: '1.2em', ml: 1 }}
+                                >
+                                    <TextField 
+                                        id={`input-amount-${itemInstance.id}`} 
+                                        variant="filled"
+                                        value={amount}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        inputProps={{ style: { textAlign: 'center', fontSize: '0.85em', padding: '0px' } }}
+                                        sx={{ maxWidth: '1.5em' }}
+                                        size="small"
+                                    />
+                                </Typography>
+                            </Box>
                         </Box>
                     </Box>
                 </CardContent>
