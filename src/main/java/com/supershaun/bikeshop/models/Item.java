@@ -37,7 +37,7 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
     @OrderBy("id")
-    private Set<ItemInstance> instances;
+    private Set<ItemInstance> instances = new HashSet<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -50,10 +50,6 @@ public class Item {
     @Column(name = "price")
     @Min(value = 1)
     private double price;
-
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
 
     public Item(String name, Category category, String description, double price) {
         this.name = name;

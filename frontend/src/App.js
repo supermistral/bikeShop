@@ -13,6 +13,7 @@ import Login from "./components/Authorization/Login/Login";
 import Registration from "./components/Authorization/Registration/Registration";
 import axiosInstance from "./constants/axios";
 import Logout from "./components/Authorization/Logout/Logout";
+import Profile from "./components/Profile/Profile";
 import OrderList from "./components/Profile/OrderList/OrderList";
 
 
@@ -79,6 +80,8 @@ const App = () => {
                             <Route path="/login" element={<Login />} />
                             <Route path="/registration" element={<Registration />} />
                             <Route path="/logout" element={<Logout />} />
+                            <Route path="/profile/*" element={<Profile />} />
+
                             {/* Search path */}
                         </Routes>
                     </Container>
