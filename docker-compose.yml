@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    container_name: bikeshop_backend
+    depends_on:
+      - database
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+     - 8080:8080
+
+  database:
+    image: postgres:12-alpine
+    container_name: bikeshop_database
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=bikeShop
+    volumes:
+    - ./schema.sql:/docker-entrypoint-initdb.d/1.sql
