@@ -2,12 +2,13 @@ package com.supershaun.bikeshop.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class MainController {
 
-    @RequestMapping(value = "{path:.*}")
-    public String index() {
-        return "index";
+    @RequestMapping(value = { "/{path:[^\\.]*}", "/**/{path:^(?!api|static).*}/{path:[^\\.]*}" }, method = RequestMethod.GET)
+    public String redirectToIndex() {
+        return "forward:/";
     }
 }

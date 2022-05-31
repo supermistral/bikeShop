@@ -5,7 +5,7 @@ spring:
       ddl-auto: update
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/bikeShop
+    url: jdbc:postgresql://database:5432/bikeShop
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -15,9 +15,9 @@ spring:
       matching-strategy: ant_path_matcher
 
 settings:
-  mode: development
+  mode: production
   image:
-    path: /media/
+    path: /usr/src/app/media/
 
   jwt:
     secret: bikeshop_jwt

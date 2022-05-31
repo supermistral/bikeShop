@@ -12,59 +12,59 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
-@Controller
-@RequestMapping("/media")
-@CrossOrigin
-public class ImageController {
-    @Autowired
-    private IImageService imageService;
-
-    @GetMapping(value = "/**", produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
-    public ResponseEntity<byte[]> getImage(HttpServletRequest request) {
-        String requestUrl = request.getRequestURL().toString();
-        String filename = requestUrl.split("/media/")[1];
-
-        byte[] image;
-
-        try {
-            image = imageService.findByName(filename);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        String[] dividedFilename = filename.split("\\.");
-
-        if (dividedFilename.length == 0) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        String imageFormat = dividedFilename[dividedFilename.length - 1];
-        MediaType mediaType;
-
-        switch (imageFormat) {
-            case "png":
-                mediaType = MediaType.IMAGE_PNG;
-                break;
-            default:
-                mediaType = MediaType.IMAGE_JPEG;
-        }
-
-        return ResponseEntity.ok()
-                .contentType(mediaType)
-                .body(image);
-    }
-
-    @PostMapping("upload/itemInstance")
-    public ResponseEntity<?> uploadItemImage(@RequestParam("image") MultipartFile file,
-                                             @RequestParam("itemInstanceId") Long id) {
-        try {
-            imageService.saveToItemInstance(file.getBytes(), file.getOriginalFilename(), id);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-        return ResponseEntity.noContent().build();
-    }
-}
+//@Controller
+//@RequestMapping("/media")
+//@CrossOrigin
+//public class ImageController {
+//    @Autowired
+//    private IImageService imageService;
+//
+//    @GetMapping(value = "/**", produces = { MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE })
+//    public ResponseEntity<byte[]> getImage(HttpServletRequest request) {
+//        String requestUrl = request.getRequestURL().toString();
+//        String filename = requestUrl.split("/media/")[1];
+//
+//        byte[] image;
+//
+//        try {
+//            image = imageService.findByName(filename);
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//
+//        String[] dividedFilename = filename.split("\\.");
+//
+//        if (dividedFilename.length == 0) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//
+//        String imageFormat = dividedFilename[dividedFilename.length - 1];
+//        MediaType mediaType;
+//
+//        switch (imageFormat) {
+//            case "png":
+//                mediaType = MediaType.IMAGE_PNG;
+//                break;
+//            default:
+//                mediaType = MediaType.IMAGE_JPEG;
+//        }
+//
+//        return ResponseEntity.ok()
+//                .contentType(mediaType)
+//                .body(image);
+//    }
+//
+//    @PostMapping("upload/itemInstance")
+//    public ResponseEntity<?> uploadItemImage(@RequestParam("image") MultipartFile file,
+//                                             @RequestParam("itemInstanceId") Long id) {
+//        try {
+//            imageService.saveToItemInstance(file.getBytes(), file.getOriginalFilename(), id);
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//
+//        return ResponseEntity.noContent().build();
+//    }
+//}

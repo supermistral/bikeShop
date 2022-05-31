@@ -4,6 +4,7 @@ import com.supershaun.bikeshop.models.*;
 import com.supershaun.bikeshop.models.enums.ERole;
 import com.supershaun.bikeshop.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 @Component
@@ -50,11 +52,17 @@ public class DataLoader implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        List<Category> categoriesCheck = categoryRepository.findAll();
+
+        if (categoriesCheck.size() != 0)
+            return;
+
         String imagePath = "category.png";
         String newImagePath = null;
 
         try {
-            byte[] image = imageRepository.findByName(imagePath);
+            byte[] image;
+            image = imageRepository.findByName(imagePath);
             newImagePath = imageRepository.save(image, Paths.get(Category.imagePath, imagePath).toString());
         } catch (Exception ex) {
             ex.printStackTrace();

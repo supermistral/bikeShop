@@ -3,11 +3,14 @@ const webpack           = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 
+const DEBUG = process.env.NODE_ENV === "production" ? 0 : 1; 
+
+
 module.exports = {
     entry: path.resolve(__dirname, "src", "index.js"),
     output: {
-        path: path.resolve(__dirname, "..", "src", "main", "resources", "static", "js"),
-        publicPath: '/',
+        path: path.resolve(__dirname, "build"),
+        publicPath: DEBUG ? '/' : '/static/',
         filename: "[name].bundle.js"
     },
     devtool: "source-map",
