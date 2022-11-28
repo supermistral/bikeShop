@@ -5,7 +5,7 @@ import CatalogRoutes from "./CatalogRoutes";
 
 
 export interface CatalogProps {
-    categories: CategoryData[];
+    categories: CategoryData[] | undefined ;
 }
 
 

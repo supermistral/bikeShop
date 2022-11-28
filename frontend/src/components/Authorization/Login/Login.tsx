@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import React, { useContext, useState } from "react";
 import RouteLink from "../../DOM/RouteLink";
 import LoginIcon from '@mui/icons-material/Login';
@@ -7,9 +7,17 @@ import UserAuthContext from "../../DOM/UserAuthContext";
 import { Navigate } from "react-router-dom";
 
 
+type FormData = {
+    email?: string;
+    password?: string;
+}
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement>
+type SubmitEvent = React.FormEvent<HTMLFormElement>
+
+
 const Login = () => {
-    const [formData, setFormData] = useState();
-    const [formErrorData, setFormErrorData] = useState();
+    const [formData, setFormData] = useState<FormData>();
 
     const { isAuthorized } = useContext(UserAuthContext);
 
@@ -17,10 +25,10 @@ const Login = () => {
         return <Navigate to="/" />
     }
 
-    const handleEmailChange = e => setFormData({ ...formData, email: e.target.value });
-    const handlePasswordChange = e => setFormData({ ...formData, password: e.target.value});
+    const handleEmailChange = (e: ChangeEvent) => setFormData({ ...formData, email: e.target.value });
+    const handlePasswordChange = (e: ChangeEvent) => setFormData({ ...formData, password: e.target.value});
 
-    const handleSubmit = e => {
+    const handleSubmit = (e: SubmitEvent) => {
         e.preventDefault();
 
         axiosInstance

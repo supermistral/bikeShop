@@ -14,18 +14,7 @@ import Registration from "./components/Authorization/Registration/Registration";
 import axiosInstance from "./constants/axios";
 import Logout from "./components/Authorization/Logout/Logout";
 import Profile from "./components/Profile/Profile";
-import { CategoryData } from "./constants/types";
-
-
-type UserRole = "manager" | "admin" | "user";
-
-interface UserRoles {
-    roles?: UserRole[];
-}
-
-interface UserAutorizedRoles extends UserRoles {
-    isAuthorized: boolean;
-};
+import { CategoryData, UserAutorizedRoles, UserRole } from "./constants/types";
 
 
 const getUserAuthData = (): UserAutorizedRoles => {

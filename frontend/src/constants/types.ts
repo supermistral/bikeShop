@@ -104,3 +104,13 @@ export interface CartItemData {
 }
 
 export type CartData = CartItemData[];
+
+export type UserRole = "manager" | "admin" | "user";
+
+export interface UserRoles {
+    roles?: UserRole[];
+}
+
+export interface UserAutorizedRoles extends UserRoles {
+    isAuthorized: boolean;
+};

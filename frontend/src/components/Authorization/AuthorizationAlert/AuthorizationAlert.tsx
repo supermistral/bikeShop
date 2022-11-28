@@ -1,9 +1,14 @@
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
-import React, { useState } from "react";
 import RouteLink from "../../DOM/RouteLink";
 
 
-const AuthorizationAlert = ({ isOpen, close }) => {
+export interface AuthorizationAlertProps {
+    isOpen: boolean;
+    close: () => void;
+}
+
+
+const AuthorizationAlert = ({ isOpen, close }: AuthorizationAlertProps) => {
     return (
         <Dialog
             open={isOpen}

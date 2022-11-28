@@ -8,10 +8,19 @@ import UserAuthContext from "../../DOM/UserAuthContext";
 import { Navigate } from "react-router-dom";
 
 
+type FormData = {
+    email?: string;
+    name?: string;
+    password?: string;
+}
+
+type ChangeEvent = React.ChangeEvent<HTMLInputElement>
+type SubmitEvent = React.FormEvent<HTMLFormElement>
+
+
 const Registration = () => {
-    const [formData, setFormData] = useState();
-    const [successful, setSuccessful] = useState(false);
-    const [formErrorData, setFormErrorData] = useState();
+    const [formData, setFormData] = useState<FormData>();
+    const [IsSuccess, setIsSuccess] = useState<boolean>(false);
 
     const { isAuthorized } = useContext(UserAuthContext);
 
@@ -19,17 +28,17 @@ const Registration = () => {
         return <Navigate to="/" />
     }
 
-    const handleEmailChange = e => setFormData({ ...formData, email: e.target.value });
-    const handlePasswordChange = e => setFormData({ ...formData, password: e.target.value});
-    const handleNameChange = e => setFormData({ ...formData, name: e.target.value });
+    const handleEmailChange = (e: ChangeEvent) => setFormData({ ...formData, email: e.target.value });
+    const handlePasswordChange = (e: ChangeEvent) => setFormData({ ...formData, password: e.target.value});
+    const handleNameChange = (e: ChangeEvent) => setFormData({ ...formData, name: e.target.value });
 
-    const handleSubmit = e => {
+    const handleSubmit = (e: SubmitEvent) => {
         e.preventDefault();
 
         axiosInstance
             .post('/auth/signup', formData)
-            .then(res => setSuccessful(true))
-            .catch(err => setFormData(prev => ({ ...prev, password: null })));
+            .then(res => setIsSuccess(true))
+            .catch(err => setFormData(prev => ({ ...prev, password: undefined })));
     }
 
     return (
@@ -40,7 +49,7 @@ const Registration = () => {
             p: 2,
             mt: 2,
         }}>
-            {successful ? (
+            {IsSuccess ? (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <CheckCircleOutlinedIcon color="success" sx={{ 
                             fontSize: '3em', 
