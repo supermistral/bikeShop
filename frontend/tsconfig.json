@@ -7,6 +7,7 @@
             "ESNext"
         ],
         "allowJs": true,
+        "downlevelIteration": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
@@ -23,7 +24,8 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "incremental": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "outDir": "build",
     },
     "include": [
         "src",
