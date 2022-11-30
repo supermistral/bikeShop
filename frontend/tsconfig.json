@@ -13,7 +13,7 @@
         "allowSyntheticDefaultImports": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
-        "module": "esnext",
+        "module": "ESNext",
         "moduleResolution": "node",
         "isolatedModules": true,
         "resolveJsonModule": true,
@@ -21,11 +21,19 @@
         "jsx": "react-jsx",
         "sourceMap": true,
         "declaration": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
         "incremental": true,
         "noFallthroughCasesInSwitch": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
         "outDir": "build",
+    },
+    "ts-node": {
+        "compilerOptions": {
+            "module": "CommonJS"
+        }
     },
     "include": [
         "src",

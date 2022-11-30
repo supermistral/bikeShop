@@ -1,13 +1,17 @@
-const path              = require("path");
-const webpack           = require("webpack");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import * as path from "path";
+import * as webpack from "webpack";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import "webpack-dev-server";
 
 
 const DEBUG = process.env.NODE_ENV === "production" ? 0 : 1; 
 
 
-module.exports = {
-    entry: path.resolve(__dirname, "src", "index.js"),
+const config: webpack.Configuration = {
+    entry: path.resolve(__dirname, "src", "index.tsx"),
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js'],
+    },
     output: {
         path: path.resolve(__dirname, "build"),
         publicPath: DEBUG ? '/' : '/static/',
@@ -63,4 +67,6 @@ module.exports = {
             "process.env": JSON.stringify(process.env)
         }),
     ],
-}
+};
+
+export default config;
