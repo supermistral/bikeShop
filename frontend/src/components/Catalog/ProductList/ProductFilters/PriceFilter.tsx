@@ -28,7 +28,6 @@ const PriceFormat = forwardRef<HTMLInputElement, ValidationNumberFormatProps>((p
 
     return (
         <NumberFormat
-            {...otherProps}
             getInputRef={ref}
             isAllowed={validate}
             onValueChange={values => {
@@ -38,6 +37,7 @@ const PriceFormat = forwardRef<HTMLInputElement, ValidationNumberFormatProps>((p
             }}
             thousandSeparator=" "
             isNumericString
+            {...otherProps}
         />
     )
 });

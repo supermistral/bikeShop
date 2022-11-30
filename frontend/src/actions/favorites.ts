@@ -11,7 +11,7 @@ const initialState: FavoritesData = { ids: [] };
 
 
 export const getFavoritesFromLocalStorage = (): FavoritesData => 
-    JSON.parse(window.localStorage.getItem(FAVORITES_KEY) || '') || initialState;
+    JSON.parse(window.localStorage.getItem(FAVORITES_KEY)!) || initialState;
 
 
 export const saveFavoritesInLocalStorage = (favorites: FavoritesData) =>

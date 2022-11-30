@@ -22,8 +22,9 @@ const Menu = ({ categories }: MenuProps) => {
                 justifyContent: "space-around",
             }}
         >
-            {categories && categories.map(item => 
-                <MenuItem 
+            {categories && categories.map((item) => 
+                <MenuItem
+                    key={item.id}
                     item={item} 
                     first={true} 
                     styles={{

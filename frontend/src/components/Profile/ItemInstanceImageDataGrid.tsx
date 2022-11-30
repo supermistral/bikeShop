@@ -1,9 +1,29 @@
-import React, { useEffect, useState } from "react";
-import DataGrid, { defaultManyToOneOptionsField } from "./DataGrid/DataGrid";
+import { GridRowId, GridRowModel } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
+import { AnyProps, DataGridColData } from "../../constants/types";
+import DataGrid, {
+    ChangeHandler, CloseHandler, defaultManyToOneOptionsField,
+    RequestBodyGetter
+} from "./DataGrid/DataGrid";
 import ImageField from "./DataGrid/ImageField";
 
 
-const getCols = ({ itemInstances, imageUrls, images, handleChange, handleClose }) => [
+type ColsGetterProps = {
+    itemInstances: AnyProps[];
+    imageUrls?: Record<GridRowId, string>;
+    images?: Record<string, File | null>;
+    handleChange?: ChangeHandler;
+    handleClose?: CloseHandler;
+}
+
+
+const getCols = ({
+    itemInstances,
+    imageUrls = {},
+    images= {},
+    handleChange,
+    handleClose
+}: ColsGetterProps): DataGridColData[] => [
     {
         field: "id",
         headerName: "Id",
@@ -24,20 +44,18 @@ const getCols = ({ itemInstances, imageUrls, images, handleChange, handleClose }
         width: 250,
         editable: true,
         getValue: params => {
-            return images[params.id] ? images[params.id].name : params.value
+            return images[params.id] ? images[params.id]?.name : params.value
         },
         renderEditCell: params => (
-            <ImageField 
-                params={params}
+            <ImageField
                 imageUrl={imageUrls[params.id]}
                 currentImage={params.row.image} 
-                handleChange={handleChange(params.id)}
-                handleClose={handleClose(params.id)}
+                handleChange={handleChange && handleChange(params.id)}
+                handleClose={handleClose && handleClose(params.id)}
             />
         ),
         renderCell: params => (
-            <ImageField 
-                params={params}
+            <ImageField
                 imageUrl={imageUrls[params.id]}
                 currentImage={params.value}
                 disabled={true}
@@ -52,40 +70,40 @@ const initialRow = {
     image: ""
 };
 
-const getRows = data => data.map(item => ({
+const getRows = (data: AnyProps[]): GridRowModel[] => data.map(item => ({
     ...item,
     itemInstance: item.itemInstance?.id
 }));
 
 
 const ItemInstanceImageDataGrid = () => {
-    const [image, setImage] = useState({});
-    const [getColumns, setGetColumns] = useState(() => item => getCols({
+    const [image, setImage] = useState<Record<string, File | null>>({});
+    const [getColumns, setGetColumns] = useState(() => (item: AnyProps) => getCols({
         itemInstances: item.itemInstances,
     }));
     
-    const handleChange = id => e =>
-        setImage(prev => ({ ...prev, [id]: e.target.files[0] }));
+    const handleChange: ChangeHandler = id => e =>
+        e.target.files && setImage(prev => ({ ...prev, [id]: e.target.files![0] }));
 
-    const handleClose = id => () =>
+    const handleClose: CloseHandler = id => () =>
         setImage(prev => ({ ...prev, [id]: null }));
 
     useEffect(() => {
-        const imageUrls = {}
+        const imageUrls: Record<GridRowId, string> = {}
         Object.keys(image)
             .filter(id => image[id])
-            .forEach(id => imageUrls[id] = URL.createObjectURL(image[id]));
+            .forEach(id => imageUrls[id] = URL.createObjectURL(image[id]!));
         
-        setGetColumns(() => item => getCols({
+        setGetColumns(() => (item: AnyProps) => getCols({
             itemInstances: item.itemInstances,
             images: image,
-            imageUrls: imageUrls,
-            handleChange: handleChange,
+            imageUrls,
+            handleChange,
             handleClose
         }));
     }, [image]);
 
-    const getRequestBody = ({ item, data, rowId }) => ({
+    const getRequestBody: RequestBodyGetter = ({ item, rowId }) => ({
         itemInstanceId: item.itemInstance,
         image: image[rowId]?.name || item.image,
         imageData: image[rowId]

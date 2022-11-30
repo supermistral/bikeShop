@@ -2,7 +2,7 @@
     Functions for working with cart
 */
 
-import { CartData, ProductItemInstanceReducedData } from "../constants/types";
+import { AnyProductItemInstanceData, CartData } from "../constants/types";
 
 
 const CART_KEY = "cart";
@@ -18,7 +18,7 @@ export const saveCartInLocalStorage = (cart: CartData) =>
     window.localStorage.setItem(CART_KEY, JSON.stringify(cart));
 
 
-export const addItemToCartInLocalStorage = (item: ProductItemInstanceReducedData, amount: number) => {
+export const addItemToCartInLocalStorage = (item: AnyProductItemInstanceData, amount: number) => {
     let cart = getCartFromLocalStorage();
     const isAdded = cart.findIndex(cartItem => cartItem.id === item.id) !== -1;
 
@@ -36,7 +36,7 @@ export const addItemToCartInLocalStorage = (item: ProductItemInstanceReducedData
 }
 
 
-export const changeItemInCartInLocalStorage = (item: ProductItemInstanceReducedData, amount: number) => {
+export const changeItemInCartInLocalStorage = (item: AnyProductItemInstanceData, amount: number) => {
     let cart = getCartFromLocalStorage();
     const cartItemIndex = cart.findIndex(c => c.id === item.id);
 
@@ -51,14 +51,14 @@ export const changeItemInCartInLocalStorage = (item: ProductItemInstanceReducedD
 }
 
 
-export const cartLocalStorageContainsItem = (item: ProductItemInstanceReducedData) => {
+export const cartLocalStorageContainsItem = (item: AnyProductItemInstanceData) => {
     const cart = getCartFromLocalStorage();
 
     return cart.findIndex(c => c.id === item.id) !== -1;
 }
 
 
-export const deleteItemFromCartInLocalStorage = (item: ProductItemInstanceReducedData) => {
+export const deleteItemFromCartInLocalStorage = (item: AnyProductItemInstanceData) => {
     let cart = getCartFromLocalStorage();
     const cartItemIndex = cart.findIndex(c => c.id === item.id);
 

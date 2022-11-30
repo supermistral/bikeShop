@@ -8,7 +8,7 @@ import RouteLink from "../../DOM/RouteLink";
 export interface MenuItemProps {
     item: CategoryWithoutParentData;
     first?: boolean;
-    styles: React.CSSProperties;
+    styles?: React.CSSProperties;
 }
 
 
@@ -25,32 +25,36 @@ const MenuItem = ({ item, first, styles }: MenuItemProps) => {
     const hasChild = item.children.length !== 0;
 
     return (
-        <RouteLink 
-            key={item.id}
-            to={`/catalog/${item.id}/items`}
-            style={styles} 
-            color="inherit" 
-            className="menu-item" 
-            underline="none"
+        <Box
+            style={styles}
+            className="menu-item"
         >
-            <Box 
-                className={`menu-${hasChild ? 'multi' : 'single'}-item`} 
+            <Box
+                className={`menu-${hasChild ? 'multi' : 'single'}-item`}
                 sx={{ px: 2 }}
             >
-                <Grid container spacing={2} sx={{ m: 0, justifyContent: 'center', flexWrap: 'nowrap' }}>
-                    {item.image && !first &&
-                        <div className="image-container">
-                            <Img src={item.image} alt="" />
-                        </div>
-                    }
-                    <Typography sx={{ py: 1 }} className="menu-item-text" variant="subtitle1">
-                        <div className="inner-text">{item.name}</div>
-                    </Typography>
-                </Grid>
+                <RouteLink
+                    to={`/catalog/${item.id}/items`}
+                    color="inherit"
+                    underline="none"
+                >
+                    <Grid container spacing={2} sx={{ m: 0, justifyContent: 'center', flexWrap: 'nowrap' }}>
+                        {item.image && !first &&
+                            <div className="image-container">
+                                <Img src={item.image} alt="" />
+                            </div>
+                        }
+                        <Typography sx={{ py: 1 }} className="menu-item-text" variant="subtitle1">
+                            <div className="inner-text">{item.name}</div>
+                        </Typography>
+                    </Grid>
+                </RouteLink>
+                
                 {hasChild && 
                     <div className="menu-item-container">
-                        {item.children.map((child, _) => 
+                        {item.children.map((child, i) =>
                             <MenuItem
+                                key={i}
                                 item={child}
                                 styles={{
                                     flexBasis: item.children.length <= 4
@@ -62,7 +66,7 @@ const MenuItem = ({ item, first, styles }: MenuItemProps) => {
                     </div>
                 }
             </Box>
-        </RouteLink>
+        </Box>
     );
 }
 

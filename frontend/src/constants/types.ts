@@ -2,6 +2,8 @@
     Request and response types
 */
 
+import { GridRenderCellParams, GridRenderEditCellParams, GridValidRowModel } from "@mui/x-data-grid";
+
 export interface AnyProps extends Record<string, any> {}
 
 export type AnyApiId = string | number | undefined;
@@ -39,17 +41,6 @@ export interface ProductItemInstanceReducedData {
     specifications: ProductSpecficiationData[];
 }
 
-export interface ProductItemReducedData {
-    id: number;
-    name: string;
-    price: number;
-}
-
-export interface ProductItemInCategoryData extends ProductItemReducedData {
-    image: string | null;
-    stock: number;
-}
-
 export interface ProductItemInstanceData {
     id: number;
     stock: number;
@@ -60,6 +51,21 @@ export interface ProductItemInstanceData {
 
 export interface ProductItemInstanceWithAmountData extends ProductItemInstanceData {
     amount: number;
+}
+
+export type AnyProductItemInstanceData = ProductItemInstanceReducedData |
+    ProductItemInstanceData |
+    ProductItemInstanceWithAmountData;
+
+export interface ProductItemReducedData {
+    id: number;
+    name: string;
+    price: number;
+}
+
+export interface ProductItemInCategoryData extends ProductItemReducedData {
+    image: string | null;
+    stock: number;
 }
 
 export interface ProductItemData extends ProductItemReducedData {
@@ -114,3 +120,44 @@ export interface UserRoles {
 export interface UserAutorizedRoles extends UserRoles {
     isAuthorized: boolean;
 };
+
+export interface QuantityItemData {
+    itemInstance: {
+        id: number;
+        itemId: number;
+        categoryId: number;
+        name: string;
+        price: number;
+        image: string | null;
+        specifications: ProductSpecficiationReducedData[];
+    },
+    quantity: number;
+}
+
+export interface OrderData {
+    id: number;
+    status: string;
+    createdAt: string;
+    quantityItems: QuantityItemData[];
+    price: number;
+    user?: {
+        email: string;
+        name: string;
+    }
+}
+
+export interface DataGridColData {
+    field: string;
+    type?: string;
+    headerName: string;
+    width: number;
+    cellClassName?: string;
+    editable?: boolean;
+    helperText?: string;
+    getActions?: ({ id }: { id: number }) => JSX.Element[];
+    renderCell?: (params: GridRenderCellParams<string, GridValidRowModel, any>) => JSX.Element;
+    renderEditCell?: (params: GridRenderEditCellParams) => JSX.Element;
+    getValue?: (params: AnyProps) => any;
+    valueOptions?: (string | number)[] | ((params: AnyProps) => (string | number)[]);
+    valueFormatter?: (data: { value: string | number }) => string | number;
+}

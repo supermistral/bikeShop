@@ -2,7 +2,6 @@ import {
     Button, Card, CardActionArea, CardActions, 
     CardContent, CardMedia, Typography, Box, Chip, IconButton, Link
 } from "@mui/material";
-import React from "react";
 import { Link as RouteLink } from "react-router-dom";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';

@@ -1,9 +1,32 @@
-import React, { useEffect, useState } from "react";
-import DataGrid, { defaultManyToOneOptionsField } from "./DataGrid/DataGrid";
+import { GridRowId } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
+import { AnyProps, DataGridColData } from "../../constants/types";
+import DataGrid, {
+    ChangeHandler, CloseHandler, ColsGetter,
+    defaultManyToOneOptionsField, RequestBodyGetter, RowsGetter
+} from "./DataGrid/DataGrid";
 import ImageField from "./DataGrid/ImageField";
 
 
-const getCols = ({ parents, imageUrls, images, handleChange, handleClose }) => [
+type ColsGetterProps = {
+    parents?: {
+        id: GridRowId;
+        name: string;
+    }[];
+    imageUrls?: Record<GridRowId, string>;
+    images?: Record<string, File | null>;
+    handleChange?: ChangeHandler;
+    handleClose?: CloseHandler;
+}
+
+
+const getCols = ({
+    handleChange,
+    handleClose,
+    parents = [],
+    imageUrls = {},
+    images = {},
+}: ColsGetterProps = {}): DataGridColData[] => [
     {
         field: "id",
         headerName: "Id",
@@ -16,7 +39,7 @@ const getCols = ({ parents, imageUrls, images, handleChange, handleClose }) => [
         width: 200,
         type: 'singleSelect',
         editable: true,
-        ...defaultManyToOneOptionsField(parents),
+        ...defaultManyToOneOptionsField(parents)
     },
     {
         field: "name",
@@ -29,21 +52,19 @@ const getCols = ({ parents, imageUrls, images, handleChange, handleClose }) => [
         headerName: "Изображение",
         width: 250,
         editable: true,
-        getValue: params => {
-            return images[params.id] ? images[params.id].name : params.value
+        getValue: (params: any) => {
+            return images[params.id] ? images[params.id]?.name : params.value
         },
         renderEditCell: params => (
-            <ImageField 
-                params={params}
+            <ImageField
                 imageUrl={imageUrls[params.id]}
                 currentImage={params.row.image} 
-                handleChange={handleChange(params.id)}
-                handleClose={handleClose(params.id)}
+                handleChange={handleChange!(params.id)}
+                handleClose={handleClose!(params.id)}
             />
         ),
         renderCell: params => (
-            <ImageField 
-                params={params}
+            <ImageField
                 imageUrl={imageUrls[params.id]}
                 currentImage={params.value}
                 disabled={true}
@@ -59,43 +80,41 @@ const initialRow = {
     image: ""
 };
 
-const getRows = data => data.map(item => ({
+const getRows: RowsGetter = (data) => (data as AnyProps[]).map(item => ({
     ...item,
     parent: item.parent?.id || "",
 }));
 
 
 const CategoryDataGrid = () => {
-    const [image, setImage] = useState({});
-    const [getColumns, setGetColumns] = useState(() => items => getCols({
-        parentOptions: items.map(item => item.name),
-    }));
+    const [image, setImage] = useState<{ [key: string]: File | null }>({});
+    const [getColumns, setGetColumns] = useState<ColsGetter>(() => getCols());
     
-    const handleChange = id => e =>
-        setImage(prev => ({ ...prev, [id]: e.target.files[0] }));
+    const handleChange: ChangeHandler = (id) => (e) =>
+        e.target.files && setImage(prev => ({ ...prev, [id]: e.target.files![0] }));
 
-    const handleClose = id => () =>
+    const handleClose: CloseHandler = (id) => () =>
         setImage(prev => ({ ...prev, [id]: null }));
 
     useEffect(() => {
-        const imageUrls = {}
+        const imageUrls: Record<GridRowId, string> = {}
         Object.keys(image)
             .filter(id => image[id])
-            .forEach(id => imageUrls[id] = URL.createObjectURL(image[id]));
+            .forEach(id => imageUrls[id] = URL.createObjectURL(image[id]!));
         
-        setGetColumns(() => items => getCols({
+        setGetColumns(() => (items: AnyProps[]) => getCols({
             parents: [
                 { id: "", name: "" },
                 ...items.map(item => ({ id: item.id, name: item.name })),
             ],
             images: image,
-            imageUrls: imageUrls,
-            handleChange: handleChange,
-            handleClose
+            imageUrls,
+            handleChange,
+            handleClose,
         }));
     }, [image]);
 
-    const getRequestBody = ({ item, data, rowId }) => ({
+    const getRequestBody: RequestBodyGetter = ({ item, rowId }) => ({
         parentId: item.parent || null,
         name: item.name,
         image: image[rowId]?.name || item.image,
@@ -103,8 +122,8 @@ const CategoryDataGrid = () => {
     });
 
     return (
-        <DataGrid 
-            url={"category/all"}
+        <DataGrid
+            url={"category"}
             getCols={getColumns} 
             initialRow={initialRow}
             getRows={getRows}

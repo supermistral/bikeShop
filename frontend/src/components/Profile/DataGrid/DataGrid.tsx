@@ -1,5 +1,10 @@
 import { Box, Button } from "@mui/material";
-import { GridRowModes, DataGrid as MuiDataGrid, GridToolbarContainer, GridActionsCellItem } from '@mui/x-data-grid';
+import {
+    GridRowModes, DataGrid as MuiDataGrid, GridToolbarContainer,
+    GridActionsCellItem, GridRowEditStartParams,
+    GridRowEditStopParams, MuiEvent, MuiBaseEvent,
+    GridRowModesModel, GridRowModel, GridRowId, GridCellParams 
+} from '@mui/x-data-grid';
 import React, { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -8,25 +13,60 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import axiosInstance from "../../../constants/axios";
 import { randomId } from "@mui/x-data-grid-generator";
+import { AnyProps, DataGridColData } from "../../../constants/types";
 
 
-export const defaultManyToOneFormatter = data => ({ value }) => {
+export interface EditToolBarProps {
+    setRows: React.Dispatch<React.SetStateAction<any[]>>;
+    setRowModesModel: React.Dispatch<React.SetStateAction<GridRowModesModel>>;
+    initialRow: GridRowModel;
+}
+
+export interface RequestBodyProps {
+    item: AnyProps;
+    rowId: GridRowId;
+}
+
+export type RowsGetter<R extends AnyProps = AnyProps[]> = (data: R) => GridRowModel[];
+export type ColsGetter<R extends AnyProps = AnyProps[]> = (data: R) => DataGridColData[];
+export type RequestBodyGetter = (data: RequestBodyProps) => AnyProps;
+export type IsCellEditableGetter<R extends AnyProps = AnyProps[]> = (data: R) => (params: GridCellParams<any>) => boolean;
+
+export type ChangeHandler = (id: GridRowId) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+export type CloseHandler = (id: GridRowId) => () => void;
+
+export interface DataGridProps {
+    url: string;
+    urlUpdate?: string;
+    urlCreate?: string;
+    urlDelete?: string;
+    getCols: ColsGetter<AnyProps> | ColsGetter<AnyProps[]> | ColsGetter<AnyProps | AnyProps[]>;
+    getRows: RowsGetter<AnyProps> | RowsGetter<AnyProps[]>;
+    initialRow: GridRowModel;
+    getRequestBody: RequestBodyGetter;
+    getIsCellEditable?: IsCellEditableGetter<AnyProps> | IsCellEditableGetter<AnyProps[]>;
+    responseKey?: string;
+}
+
+type RowEditStartEvent = MuiEvent<React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>>;
+type RowEditStopEvent = MuiEvent<MuiBaseEvent>;
+
+
+export const defaultManyToOneFormatter = (data: AnyProps[]) => ({ value }: { value: any }) => {
     const dataItem = data.find(i => i.id === value);
-    if (dataItem) {
-        return dataItem.id + " - " + dataItem.name;
-    }
+    if (dataItem) return dataItem.id + " - " + dataItem.name;
     return "";
 }
 
-export const defaultManyToOneOptions = data => data.map(item => item.id);
+export const defaultManyToOneOptions = (data: AnyProps[]): number[] => data.map(item => item.id);
 
-export const defaultManyToOneOptionsField = data => ({
+export const defaultManyToOneOptionsField = (data: AnyProps[]) => ({
     valueOptions: defaultManyToOneOptions(data),
     valueFormatter: defaultManyToOneFormatter(data),
 });
 
 
-const EditToolBar = ({ setRows, setRowModesModel, initialRow }) => {
+const EditToolBar = ({ setRows, setRowModesModel, initialRow }: EditToolBarProps) => {
     
     const handleClick = () => {
         const rowId = randomId();
@@ -55,13 +95,14 @@ const DataGrid = ({
     getCols, 
     getRows, 
     initialRow,
-    getRequestBody, 
+    getRequestBody,
+    getIsCellEditable, 
     responseKey,
     ...props
-}) => {
-    const [items, setItems] = useState();
-    const [rows, setRows] = useState([]);
-    const [rowModesModel, setRowModesModel] = useState({});
+}: DataGridProps) => {
+    const [items, setItems] = useState<AnyProps | AnyProps[]>();
+    const [rows, setRows] = useState<GridRowModel[]>([]);
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
     useEffect(() => {
         axiosInstance
@@ -73,30 +114,30 @@ const DataGrid = ({
     useEffect(() => {
         if (items)
             setRows(
-                getRows(responseKey ? items[responseKey] : items).map(row => ({
+                getRows(responseKey ? (items as AnyProps)[responseKey] : items).map(row => ({
                     ...row,
                     rowId: randomId(),
                 }))
             );
     }, [items]);
 
-    const handleRowEditStart = (params, event) => {
+    const handleRowEditStart = (params: GridRowEditStartParams, event: RowEditStartEvent) => {
         event.defaultMuiPrevented = true;
     };
     
-    const handleRowEditStop = (params, event) => {
+    const handleRowEditStop = (params: GridRowEditStopParams, event: RowEditStopEvent) => {
         event.defaultMuiPrevented = true;
     };
     
-    const handleEditClick = rowId => () => {
+    const handleEditClick = (rowId: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [rowId]: { mode: GridRowModes.Edit } });
     };
     
-    const handleSaveClick = rowId => () => {
+    const handleSaveClick = (rowId: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [rowId]: { mode: GridRowModes.View } });
     };
     
-    const handleDeleteClick = rowId => () => {
+    const handleDeleteClick = (rowId: GridRowId) => () => {
         const itemId = rows.find(row => row.rowId === rowId).id;
 
         axiosInstance
@@ -105,7 +146,7 @@ const DataGrid = ({
         setRows(rows.filter((row) => row.rowId !== rowId));
     };
     
-    const handleCancelClick = rowId => () => {
+    const handleCancelClick = (rowId: GridRowId) => () => {
         setRowModesModel({
             ...rowModesModel,
             [rowId]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -118,12 +159,10 @@ const DataGrid = ({
         }
     };
     
-    const processRowUpdate = (newRow) => {
-        console.log(newRow);
-        const requestBody = getRequestBody({ 
-            item: newRow, 
-            rowId: newRow.rowId, 
-            data: items 
+    const processRowUpdate = (newRow: GridRowModel): GridRowModel => {
+        const requestBody = getRequestBody({
+            item: newRow,
+            rowId: newRow.rowId
         });
 
         let formData, options;
@@ -138,13 +177,17 @@ const DataGrid = ({
             formData.append("image", imageData);
 
             options = {
-                header: {
+                headers: {
                     'Content-Type': 'multipart/form-data',
                 }
-            }
+            };
         } else {
             formData = requestBody;
-            options = {};
+            options = {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
         }
 
         if (newRow.isNew) {
@@ -163,15 +206,18 @@ const DataGrid = ({
         return updatedRow;
     };
 
+    const getColumns = getCols as ColsGetter<AnyProps | AnyProps[]>;
+    const getCellEditable = getIsCellEditable as IsCellEditableGetter<AnyProps | AnyProps[]> | undefined;
+
     const columns = items && [
-        ...getCols(items),
+        ...getColumns(items),
         {
             field: "actions",
             type: "actions",
             headerName: "Действия",
             width: 100,
             cellClassName: "actions",
-            getActions: ({ id }) => {
+            getActions: ({ id }: { id: GridRowId }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
@@ -233,6 +279,7 @@ const DataGrid = ({
                     componentsProps={{ toolbar: { setRows, setRowModesModel, initialRow } }}
                     experimentalFeatures={{ newEditingApi: true }}
                     rowHeight={65}
+                    isCellEditable={getCellEditable && getCellEditable(items)}
                     {...props}
                 />
             }

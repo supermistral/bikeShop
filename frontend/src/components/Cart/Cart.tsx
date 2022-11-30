@@ -1,19 +1,16 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import { changeItemInCartInLocalStorage, cleanCartInLocalStorage, deleteItemFromCartInLocalStorage, getCartFromLocalStorage } from "../../actions/cart";
 import axiosInstance from "../../constants/axios";
 import { formatPrice } from "../../utils/product";
 import CartItem from "./CartItem";
 import RouteLink from "../DOM/RouteLink";
-import UserAuthContext from "../DOM/UserAuthContext";
 import AuthorizationAlert from "../Authorization/AuthorizationAlert/AuthorizationAlert";
 import { CartData, ProductItemInstanceData, ProductItemInstanceWithAmountData } from "../../constants/types";
 
 
 const Cart = () => {
-    // const { isAuthorized } = useContext(UserAuthContext);
-
     const [cartItems, setCartItems] = useState<CartData>();
     const [items, setItems] = useState<ProductItemInstanceWithAmountData[]>();
     const [success, setSuccess] = useState<boolean>(false);

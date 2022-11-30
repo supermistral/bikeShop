@@ -1,8 +1,15 @@
-import React from "react";
-import DataGrid, { defaultManyToOneOptionsField } from "./DataGrid/DataGrid";
+import { AnyProps, DataGridColData } from "../../constants/types";
+import DataGrid, {
+    ColsGetter, defaultManyToOneOptionsField, RequestBodyGetter, RowsGetter
+} from "./DataGrid/DataGrid";
 
 
-const getCols = ({ categories }) => [
+type ColsGetterProps = {
+    categories: AnyProps[];
+}
+
+
+const getCols = ({ categories }: ColsGetterProps): DataGridColData[] => [
     {
         field: "id",
         headerName: "Id",
@@ -46,12 +53,12 @@ const initialRow = {
     description: ""
 };
 
-const getRows = data => data.map(item => ({
+const getRows: RowsGetter = (data) => data.map(item => ({
     ...item,
     category: item.category?.id
 }));
 
-const getRequestBody = ({ item, data }) => ({
+const getRequestBody: RequestBodyGetter = ({ item }) => ({
     categoryId: item.category,
     name: item.name,
     price: item.price,
@@ -60,7 +67,7 @@ const getRequestBody = ({ item, data }) => ({
 
 
 const ItemDataGrid = () => {
-    const getColumns = item => getCols({ 
+    const getColumns: ColsGetter<AnyProps> = (item) => getCols({ 
         categories: item.categories,
     });
 

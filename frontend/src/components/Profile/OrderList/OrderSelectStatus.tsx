@@ -1,9 +1,20 @@
-import { Chip, MenuItem, Select } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Chip, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { useEffect, useState } from "react";
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import axiosInstance from "../../../constants/axios";
 import SavingSnackbar from "../../DOM/SavingSnackbar";
+
+
+export interface StatusChipProps {
+    value: string;
+    label?: string;
+}
+
+export interface OrderSelectStatusProps {
+    id: number;
+    status: string;
+}
 
 
 const statusChoices = [
@@ -26,14 +37,14 @@ const statusChoices = [
     }
 ];
 
-export const getStatusLabel = status => 
+export const getStatusLabel = (status: string) => 
     statusChoices.find(s => s.value === status)?.label;
 
 
-export const StatusChip = ({ value, label }) => {
+export const StatusChip = ({ value, label }: StatusChipProps) => {
     const statusIcon = (label 
-        ? statusChoices.find(s => s.label === label).icon
-        : statusChoices.find(s => s.value === value).icon) || <TimelapseIcon />;
+        ? statusChoices.find(s => s.label === label)!.icon
+        : statusChoices.find(s => s.value === value)!.icon) || <TimelapseIcon />;
 
     return (
         <Chip
@@ -45,25 +56,30 @@ export const StatusChip = ({ value, label }) => {
 }
 
 
-const OrderSelectStatus = ({ id, status }) => {
-    const [value, setValue] = useState();
-    const [open, setOpen] = useState(false);
-    const [success, setSuccess] = useState(false);
+const OrderSelectStatus = ({ id, status }: OrderSelectStatusProps) => {
+    const [value, setValue] = useState<string>();
+    const [open, setOpen] = useState<boolean>(false);
+    const [snackbarData, setSnackbarData] = useState<{ isSuccess: boolean; isOpen: boolean }>({
+        isSuccess: false,
+        isOpen: false
+    });
+
+    const changeSnackbarIsOpen = (isOpen: boolean) => setSnackbarData(prev => ({ ...prev, isOpen }))
 
     const handleClose = () => setOpen(false);
     const handleOpen = () => setOpen(true);
-    const handleChange = e => setValue(e.target.value);
+    const handleChange = (e: SelectChangeEvent) => setValue(e.target.value);
 
     useEffect(() => {
         if (!value)
             return;
 
-        const statusValue = statusChoices.find(s => s.label === value).value;
+        const statusValue = statusChoices.find(s => s.label === value)!.value;
 
         axiosInstance
             .put(`orders/${id}/status?name=${statusValue}`)
-            .then(res => setSuccess(true))
-            .catch(e => setSuccess(false));
+            .then(res => setSnackbarData({ isOpen: true, isSuccess: true }))
+            .catch(e => setSnackbarData({ isOpen: true, isSuccess: false }));
 
     }, [value]);
 
@@ -89,20 +105,21 @@ const OrderSelectStatus = ({ id, status }) => {
                     </MenuItem>
                 )}
             </Select>
-            {success.error ? (
+            {snackbarData.isSuccess ? (
                 <SavingSnackbar 
-                    open={success}
-                    close={() => setSuccess(false)}
-                    error={true}
-                    message="Произошла ошибка при сохранении"
-                />
-            ) : success ? (
-                <SavingSnackbar 
-                    open={success}
-                    close={() => setSuccess(false)} 
+                    open={snackbarData.isOpen}
+                    isSuccess={snackbarData.isSuccess}
+                    close={() => changeSnackbarIsOpen(false)} 
                     message="Статус сохранен"
                 />
-            ) : null}
+            ) : (
+                <SavingSnackbar 
+                    open={snackbarData.isOpen}
+                    isSuccess={snackbarData.isSuccess}
+                    close={() => changeSnackbarIsOpen(false)}
+                    message="Произошла ошибка при сохранении"
+                />
+            )}
         </>
     )
 }

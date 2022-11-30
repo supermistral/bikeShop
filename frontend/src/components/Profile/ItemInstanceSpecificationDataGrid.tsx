@@ -1,11 +1,17 @@
-import React from "react";
-import DataGrid from "./DataGrid/DataGrid";
+import { AnyProps, DataGridColData } from "../../constants/types";
+import DataGrid, { ColsGetter, IsCellEditableGetter, RequestBodyGetter, RowsGetter } from "./DataGrid/DataGrid";
+
+
+type ColsGetterProps = {
+    itemInstances: AnyProps[];
+    categorySpecifications: AnyProps[];
+}
 
 
 const getCols = ({ 
     itemInstances, 
     categorySpecifications,
-}) => [
+}: ColsGetterProps): DataGridColData[] => [
     {
         field: "id",
         headerName: "Id",
@@ -69,7 +75,7 @@ const initialRow = {
     value: "",
 };
 
-const getRows = data => data.map(item => ({
+const getRows: RowsGetter = data => data.map(item => ({
     ...item,
     itemInstance: item.itemInstance.id,
     categorySpecification: item.categorySpecification.id,
@@ -77,7 +83,7 @@ const getRows = data => data.map(item => ({
     valueChoice: item.choice ? item.value : "",
 }));
 
-const getRequestBody = ({ item, data }) => ({
+const getRequestBody: RequestBodyGetter = ({ item }) => ({
     itemInstanceId: item.itemInstance,
     categorySpecificationId: item.categorySpecification,
     value: item.valueChoice || item.value,
@@ -85,12 +91,12 @@ const getRequestBody = ({ item, data }) => ({
 
 
 const ItemInstanceSpecificationDataGrid = () => {
-    const getColumns = item => getCols({ 
-        itemInstances: item.itemInstances.map(i => ({ id: i.id, name: i.item.name })),
+    const getColumns: ColsGetter<AnyProps> = item => getCols({ 
+        itemInstances: (item.itemInstances as AnyProps[]).map(i => ({ id: i.id, name: i.item.name })),
         categorySpecifications: item.categorySpecifications,
     });
 
-    const getIsCellEditable = data => (params) => {
+    const getIsCellEditable: IsCellEditableGetter<AnyProps> = (data) => (params) => {
         const { field } = params;
         if (field === "id")
             return false;
@@ -98,14 +104,14 @@ const ItemInstanceSpecificationDataGrid = () => {
         if (field === "valueChoice" || field === "value") {
             const rowCategorySpec = params.value
 
-            const categorySpec = data.categorySpecifications.find(c => 
+            const categorySpec = (data.categorySpecifications as AnyProps[]).find(c => 
                     c.id === rowCategorySpec);
 
             if (field === "valueChoice") {
-                return !!categorySpec.choices
+                return !!(categorySpec?.choices)
             }
 
-            return !categorySpec.choices;
+            return !(categorySpec?.choices);
         }
 
         return true;

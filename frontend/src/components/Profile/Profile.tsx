@@ -1,11 +1,11 @@
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Box, BoxTypeMap, Tab, Tabs } from "@mui/material";
+import { DefaultComponentProps } from "@mui/material/OverridableComponent";
 import React, { useContext, useState } from "react";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import UserAuthContext from "../DOM/UserAuthContext";
 import OrderFullList from "./OrderList/OrderFullList";
 import OrderList from "./OrderList/OrderList";
 import CategoryDataGrid from "./CategoryDataGrid";
-import RouteLink from "../DOM/RouteLink";
 import ItemDataGrid from "./ItemDataGrid";
 import CategorySpecificationDataGrid from "./CategorySpecificationDataGrid";
 import ItemSpecificationDataGrid from "./ItemSpecificationDataGrid";
@@ -15,16 +15,23 @@ import ItemInstanceSpecificationDataGrid from "./ItemInstanceSpecificationDataGr
 import ItemInstanceImageDataGrid from "./ItemInstanceImageDataGrid";
 
 
+export interface TabPanelProps extends DefaultComponentProps<BoxTypeMap> {
+    children: React.ReactNode | React.ReactNode[];
+    value: number;
+    index: number;
+}
+
+
 const userTabs = [
     { label: "Мои заказы", component: <OrderList />, path: "" },
 ];
 const managerTabs = [
     { label: "Заказы", component: <OrderFullList />, path: "orders" },
     { label: "Модификации товаров", component: <ItemInstanceDataGrid />, path: "" },
-    { label: "Изображения модификаций товаров", component: <ItemInstanceImageDataGrid />, },
-    { label: "Характеристики модификаций товаров", component: <ItemInstanceSpecificationDataGrid /> },
+    { label: "Изображения модификаций товаров", component: <ItemInstanceImageDataGrid />, path: "imagesOfInstances"},
+    { label: "Характеристики модификаций товаров", component: <ItemInstanceSpecificationDataGrid />, path: "specificationsOfInstances"},
     { label: "Товары", component: <ItemDataGrid />, path: "items" },
-    { label: "Характеристики товаров", component: <ItemSpecificationDataGrid />, path: "" },
+    { label: "Характеристики товаров", component: <ItemSpecificationDataGrid />, path: "specificationsOfItems" },
 ];
 const adminTabs = [
     ...managerTabs,
@@ -34,14 +41,13 @@ const adminTabs = [
 ];
 
 
-const TabPanel = ({ children, value, index, ...props }) => {
+const TabPanel = ({ children, value, index, ...props }: TabPanelProps) => {
     return (
         <Box
-            rol="tabpanel"
-            hidden={value !== index}
-            id={`profile-tabpanel-${index}`}
-            aria-labelledby={`profile-tab-${index}`}
-            sx={{ flex: 1 }}
+            sx={{
+                flex: 1,
+                visibility: value !== index ? 'hidden' : 'visible'
+            }}
             {...props}
         >
             {value === index &&
@@ -61,14 +67,14 @@ const Profile = () => {
         return <Navigate to="/" />
     }
 
-    const [value, setValue] = useState(0);
-    const [tabs, setTabs] = useState(
-        roles.indexOf("admin") !== -1 ? adminTabs
-            : roles.indexOf("manager") !== -1 ? managerTabs
+    const [value, setValue] = useState<number>(0);
+    const [tabs, setTabs] = useState<typeof userTabs>(
+        roles!.indexOf("admin") !== -1 ? adminTabs
+            : roles!.indexOf("manager") !== -1 ? managerTabs
             : userTabs
     );
 
-    const handleChange = (event, newValue) => setValue(newValue);
+    const handleChange = (e: React.SyntheticEvent, newValue: number) => setValue(newValue);
 
     return (
         <Box sx={{ my: 2, flexGrow: 1, bgcolor: 'background.paper', display: 'flex' }}>
@@ -101,16 +107,6 @@ const Profile = () => {
                     {tab.component}
                 </TabPanel>
             )}
-            {/* <Outlet />
-            <Routes>
-                {tabs.map((tab, i) =>
-                    <Route 
-                        key={i} 
-                        path={tab.path} 
-                        element={<TabPanel index={i} value={value} >{tab.component}</TabPanel>} 
-                    />
-                )}
-            </Routes> */}
         </Box>
     )
 }

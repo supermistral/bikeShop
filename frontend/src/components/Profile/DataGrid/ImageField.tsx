@@ -1,6 +1,16 @@
+import React from "react";
 import { Box, Button, FormControl, IconButton } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
+
+
+export interface ImageFieldProps {
+    id?: number;
+    disabled?: boolean;
+    currentImage?: string;
+    imageUrl: string;
+    handleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleClose?: () => void;
+}
 
 
 const ImageField = ({
@@ -10,7 +20,7 @@ const ImageField = ({
     imageUrl,
     handleChange,
     handleClose
-}) => {
+}: ImageFieldProps) => {
 
     return (
         <FormControl sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: '100%' }}>
@@ -29,7 +39,7 @@ const ImageField = ({
                         onChange={handleChange}
                     />
                     <label htmlFor={`image-upload-${id}`} style={{ display: 'flex' }}>
-                        <Button variant="filled" component="span">Upload</Button>
+                        <Button variant="contained" component="span">Upload</Button>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <IconButton onClick={handleClose} size="small">
                                 <CloseIcon />

@@ -4,13 +4,13 @@ import ShopOutlinedIcon from '@mui/icons-material/ShopOutlined';
 import ProductCard from "../Catalog/ProductList/ProductCard/ProductCard";
 import RouteLink from "../DOM/RouteLink";
 import { getFavoritesFromLocalStorage } from "../../actions/favorites";
-import { FavoritesData, ProductItemReducedData } from "../../constants/types";
+import { FavoritesData, ProductItemInCategoryData } from "../../constants/types";
 
 
 const Favorites = () => {
     const isAuthorized = false;
     const [itemsData, setItemsData] = useState<FavoritesData>();
-    const [items, setItems] = useState<ProductItemReducedData[]>();
+    const [items, setItems] = useState<ProductItemInCategoryData[]>();
 
     useEffect(() => {
         // Local storage

@@ -41,7 +41,7 @@ const getRoutes = (items: CategoryData[]) => [
     },
     {
         path: ':categoryId/items',
-        element: <ProductList categories={items} />
+        element: <ProductList />
     },
     {
         path: 'item/:itemId',

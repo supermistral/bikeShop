@@ -1,24 +1,29 @@
 import { Box, List, ListItem, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "../../../constants/axios";
+import { OrderData } from "../../../constants/types";
 import Order from "./Order";
 
 
-const OrderList = ({ isAdmin }) => {
-    const [orders, setOrders] = useState();
+export interface OrderListProps {
+    isAdmin?: boolean;
+}
+
+
+const OrderList = ({ isAdmin }: OrderListProps) => {
+    const [orders, setOrders] = useState<OrderData[]>();
     
     useEffect(() => {
         axiosInstance
-            .get(isAdmin ? "orders/all" : "orders")
+            .get("orders")
             .then(res => setOrders(res.data))
             .catch(err => console.log(err));
-    
     }, []);
     
     return (
         <Box sx={{ px: 1 }}>
             {orders ? (
-                <List spacing={2}>
+                <List sx={{ margin: '1em 0' }}>
                     {orders.map((order, i) =>
                         <ListItem key={i}>
                             <Order order={order} isAdmin={isAdmin} />

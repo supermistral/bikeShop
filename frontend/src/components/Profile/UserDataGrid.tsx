@@ -1,8 +1,13 @@
-import React from "react";
-import DataGrid from "./DataGrid/DataGrid";
+import { AnyProps, DataGridColData } from "../../constants/types";
+import DataGrid, { ColsGetter, IsCellEditableGetter, RequestBodyGetter, RowsGetter } from "./DataGrid/DataGrid";
 
 
-const getCols = ({ roleOptions }) => [
+type ColsGetterProps = {
+    roleOptions: string[]
+}
+
+
+const getCols = ({ roleOptions }: ColsGetterProps): DataGridColData[] => [
     {
         field: "id",
         headerName: "Id",
@@ -45,21 +50,23 @@ const initialRow = {
     password: "",
 };
 
-const getRows = data => data.map(item => ({
+const getRows: RowsGetter = data => data.map(item => ({
     ...item,
 }));
 
-const getRequestBody = ({ item, data }) => ({
+const getRequestBody: RequestBodyGetter = ({ item }) => ({
     email: item.email,
     name: item.name,
     role: item.role,
     password: item.password,
 });
 
+const getIsCellEditable: IsCellEditableGetter = () => params => params.row.role !== "ROLE_USER";
+
 
 const UserDataGrid = () => {
-    const getColumns = item => getCols({ 
-        roleOptions: item.roles.map(item => item.name)
+    const getColumns: ColsGetter<AnyProps> = item => getCols({ 
+        roleOptions: (item.roles as AnyProps[]).map(item => item.name)
     });
 
     return (
@@ -70,7 +77,7 @@ const UserDataGrid = () => {
             initialRow={initialRow}
             getRequestBody={getRequestBody}
             responseKey={"users"}
-            isCellEditable={params => params.row.role !== "ROLE_USER"}
+            getIsCellEditable={getIsCellEditable}
         />
     )
 }

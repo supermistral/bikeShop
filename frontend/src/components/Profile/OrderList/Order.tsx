@@ -1,20 +1,33 @@
-import { Box, Button, Card, CardActionArea, CardContent, CardMedia, Chip, Collapse, Divider, List, Typography } from "@mui/material";
-import React, { useState } from "react";
+import {
+    Box, Button, Card, CardActionArea, CardContent, CardMedia, Chip,
+    Collapse, List, Typography
+} from "@mui/material";
+import { useState } from "react";
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import TimelapseIcon from '@mui/icons-material/Timelapse';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import RouteLink from "../../DOM/RouteLink";
 import { formatPrice } from "../../../utils/product";
 import OrderSelectStatus, { StatusChip } from "./OrderSelectStatus";
+import { OrderData, QuantityItemData } from "../../../constants/types";
 
 
-const OrderItem = ({ item }) => {
+export interface OrderItemProps {
+    item: QuantityItemData;
+}
+
+export interface OrderProps {
+    order: OrderData;
+    isAdmin?: boolean;
+}
+
+
+const OrderItem = ({ item }: OrderItemProps) => {
     return (
         <Card sx={{ display: 'flex', p: 1, mt: 3, position: 'relative' }}>
             <CardMedia
                 component="img"
-                image={item.itemInstance.image}
+                image={item.itemInstance.image || undefined}
                 sx={{ flexBasis: '30%', objectFit: 'contain', height: 150 }}
                 alt={item.itemInstance.name}
             />
@@ -91,12 +104,12 @@ const OrderItem = ({ item }) => {
 }
 
 
-const Order = ({ order, isAdmin }) => {
-    const [open, setOpen] = useState(false);
+const Order = ({ order, isAdmin }: OrderProps) => {
+    const [open, setOpen] = useState<boolean>(false);
 
     const handleClick = () => setOpen(!open);
 
-    const formatDatePart = part => ("0" + part).slice(-2);
+    const formatDatePart = (part: number) => ("0" + part).slice(-2);
 
     const date = new Date(order.createdAt);
     const dateParts = {
@@ -116,7 +129,7 @@ const Order = ({ order, isAdmin }) => {
                         {isAdmin && (
                             <Chip
                                 avatar={<PermIdentityIcon />}
-                                label={`${order.user.name} / ${order.user.email}`}
+                                label={`${order.user?.name} / ${order.user?.email}`}
                                 variant="outlined"
                                 size="small"
                                 sx={{ mx: 2 }}
