@@ -35,7 +35,7 @@ public class OrderService {
     @Autowired
     private ItemInstanceRepository itemInstanceRepository;
 
-    public List<OrderDto> getAllByUser(String email) {
+    public List<? extends OrderDto> getAllByUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
 
@@ -46,19 +46,13 @@ public class OrderService {
                 .orElse(null);
 
         if (role != null) {
-            return orderRepository.findAll().stream()
-                    .map(OrderDto::new)
+            return orderRepository.findAllByOrderByCreatedAtDesc().stream()
+                    .map(OrderUserDto::new)
                     .collect(Collectors.toList());
         }
 
         return orderRepository.findAllByUserEmailOrderByCreatedAtDesc(email).stream()
                 .map(OrderDto::new)
-                .collect(Collectors.toList());
-    }
-
-    public List<OrderUserDto> getAll() {
-        return orderRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(OrderUserDto::new)
                 .collect(Collectors.toList());
     }
 

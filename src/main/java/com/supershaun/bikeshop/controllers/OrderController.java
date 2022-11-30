@@ -28,11 +28,6 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getAllByUser(email));
     }
 
-    @GetMapping("all")
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(orderService.getAll());
-    }
-
     @PutMapping("{id}/status")
     public ResponseEntity<?> changeStatus(@PathVariable("id") Long id, @RequestParam("name") String name) {
         orderService.changeStatusById(id, name);

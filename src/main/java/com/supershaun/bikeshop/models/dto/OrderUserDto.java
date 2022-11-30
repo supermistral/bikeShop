@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class OrderUserDto {
+public class OrderUserDto extends OrderDto {
     private Long id;
     private String status;
     private Date createdAt;

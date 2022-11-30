@@ -17,6 +17,8 @@ public class OrderDto {
     private List<QuantityItemDto> quantityItems;
     private double price;
 
+    public OrderDto() {}
+
     public OrderDto(Order order) {
         id = order.getId();
         createdAt = order.getCreatedAt();
