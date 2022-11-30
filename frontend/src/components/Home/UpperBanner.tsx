@@ -1,4 +1,4 @@
-import { Card, CardMedia, Typography } from "@mui/material";
+import { Box, Card, CardMedia, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles"
 import banner from "../../media/home-banner.jpg"
 
@@ -28,10 +28,10 @@ const UpperBanner = () => {
                 alt="Banner"
                 sx={{ maxHeight: "500px" }}
             />
-            <Typography variant="body1" className={classes.text}>
+            <Box className={classes.text}>
                 <Typography variant="h2" sx={{ fontSize: "50px" }}>Lorem ipsum</Typography>
                 <Typography variant="h5">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Typography>
-            </Typography>
+            </Box>
         </Card>
     )
 }

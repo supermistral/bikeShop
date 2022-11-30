@@ -1,6 +1,6 @@
-import { Box, InputBaseComponentProps, Slider, Stack, TextField, Typography } from "@mui/material";
-import React, { forwardRef, useCallback, useEffect, useState } from "react";
-import NumberFormat, { NumberFormatProps, NumberFormatValues } from "react-number-format";
+import { Box, Slider, Stack, TextField, Typography } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import NumberFormat, { NumberFormatValues, SourceInfo } from "react-number-format";
 import { useSearchParams } from "react-router-dom";
 import { debounce } from "lodash";
 
@@ -12,35 +12,10 @@ export interface PriceFilterProps {
     }
 }
 
-interface ValidationNumberFormatProps extends NumberFormatProps {
-    validate: (values: NumberFormatValues) => boolean;
-    onChange: (event: { target: { name: string; value: string } }) => void;
-}
-
 type SettingsSearchParamsData = {
     key: string;
     values: number[];
 }
-
-
-const PriceFormat = forwardRef<HTMLInputElement, ValidationNumberFormatProps>((props, ref) => {
-    const { onChange, validate, name, ...otherProps } = props;
-
-    return (
-        <NumberFormat
-            getInputRef={ref}
-            isAllowed={validate}
-            onValueChange={values => {
-                onChange!({
-                    target: ({ name: name!, value: values.value })
-                })
-            }}
-            thousandSeparator=" "
-            isNumericString
-            {...otherProps}
-        />
-    )
-});
 
 
 const PriceFilter = ({ price }: PriceFilterProps) => {
@@ -52,20 +27,20 @@ const PriceFilter = ({ price }: PriceFilterProps) => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const debouncedHandleChange = useCallback(
-        debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-            setValues(prev => {
-                const value = +e.target.value;
+        debounce((values: NumberFormatValues, sourceInfo: SourceInfo) => {
+            const value = values.floatValue;
+            const event = sourceInfo.event;
 
-                if (value >= minPrice && value <= maxPrice) {
-                    if (e.target.name === "min-price")
-                        return [value, prev[1]];
-                    return [prev[0], value]
-                }
-
-                return prev;
-            });
+            if (event && value) {
+                setValues(prev => {
+                    if (value < minPrice) return [minPrice, prev[1]];
+                    if (value > maxPrice) return [prev[0], maxPrice];
+                    if (event.target.name === "min-price") return [value, prev[1]];
+                    return [prev[0], value];
+                });
+            }
         }, 300),
-        []
+        [minPrice, maxPrice]
     )
 
     const debouncedSettingSearchParams = useCallback(
@@ -83,46 +58,40 @@ const PriceFilter = ({ price }: PriceFilterProps) => {
         debouncedSettingSearchParams({ key: "price", values: values });
     }, [values])
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        debouncedHandleChange(e);
-    }
+    const handleSliderChange = useCallback((e: Event, values: number | number[]) => {
+        setValues(values as number[]);
+    }, [])
 
-    const handleSliderChange = (e: Event, value: number | number[]) => {
-        setValues(value as number[]);
-    }
-
-    const handleValidate = ({ floatValue }: { floatValue: number }) => {
-        return floatValue <= maxPrice;
-    }
+    const isAllowed = useCallback(({ floatValue }: { floatValue: number | undefined }) => (
+        (floatValue && maxPrice) ? floatValue <= maxPrice : false
+    ), [minPrice, maxPrice])
 
     return (
         <>
             <Stack direction="row">
-                <TextField
+                <NumberFormat
+                    customInput={TextField}
+                    isAllowed={isAllowed}
+                    onValueChange={debouncedHandleChange}
+                    thousandSeparator=" "
                     label="от"
                     value={values[0]}
-                    onChange={handleChange}
                     name="min-price"
                     id="min-price-input"
                     variant="filled"
-                    InputProps={{ 
-                        inputComponent: typeof PriceFormat as React.ElementType<InputBaseComponentProps>, 
-                        inputProps: { validate: handleValidate } 
-                    }}
                     size="small"
                     sx={{ mr: 1 }}
                 />
-                <TextField
+                <NumberFormat
+                    customInput={TextField}
+                    isAllowed={isAllowed}
+                    onValueChange={debouncedHandleChange}
+                    thousandSeparator=" "
                     label="до"
                     value={values[1]}
-                    onChange={handleChange}
                     name="max-price"
                     id="max-price-input"
                     variant="filled"
-                    InputProps={{ 
-                        inputComponent: typeof PriceFormat as React.ElementType<InputBaseComponentProps>,
-                        inputProps: { validate: handleValidate} 
-                    }}
                     size="small"
                     sx={{ mr: 1 }}
                 />

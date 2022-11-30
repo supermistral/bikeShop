@@ -136,7 +136,7 @@ const Order = ({ order, isAdmin }: OrderProps) => {
                             />
                         )}
                     </Box>
-                    <Typography variant="body1">
+                    <Typography variant="body1" variantMapping={{ body1: 'div' }}>
                         {isAdmin ? (
                             <OrderSelectStatus 
                                 id={order.id}
@@ -148,7 +148,7 @@ const Order = ({ order, isAdmin }: OrderProps) => {
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mt: 1 }}>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" variantMapping={{ body2: 'div' }}>
                         {`${dateParts.day}.${dateParts.month}.${dateParts.year}`}
                         <div>
                             {`${dateParts.hour}:${dateParts.minute}`}
@@ -167,6 +167,7 @@ const Order = ({ order, isAdmin }: OrderProps) => {
                                         fontSize: '0.8em',
                                         px: 0.75
                                     }}
+                                    variantMapping={{ body1: 'div' }}
                                 >
                                     <Typography variant="caption" color="text.secondary">арт. </Typography>
                                     {item.itemInstance.id}
@@ -198,7 +199,7 @@ const Order = ({ order, isAdmin }: OrderProps) => {
                 </Collapse>
             </CardContent>
             <CardActionArea onClick={handleClick} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button endIcon={open ? <ExpandLess /> : <ExpandMore />}>
+                <Button component="div" endIcon={open ? <ExpandLess /> : <ExpandMore />}>
                     {open ? "Скрыть" : "Развернуть"}
                 </Button>
             </CardActionArea>

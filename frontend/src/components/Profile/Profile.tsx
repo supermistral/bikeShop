@@ -46,7 +46,7 @@ const TabPanel = ({ children, value, index, ...props }: TabPanelProps) => {
         <Box
             sx={{
                 flex: 1,
-                visibility: value !== index ? 'hidden' : 'visible'
+                display: value !== index ? 'none' : 'static'
             }}
             {...props}
         >
@@ -93,7 +93,8 @@ const Profile = () => {
                 }}
             >
                 {tabs.map((tab, i) =>
-                    <Tab 
+                    <Tab
+                        key={i}
                         label={tab.label} 
                         id={`profile-tab-${i}`} 
                         aria-controls={`profile-tabpanel-${i}`} 
@@ -103,7 +104,7 @@ const Profile = () => {
                 )}
             </Tabs>
             {tabs.map((tab, i) => 
-                <TabPanel index={i} value={value}>
+                <TabPanel key={i} index={i} value={value}>
                     {tab.component}
                 </TabPanel>
             )}

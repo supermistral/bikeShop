@@ -80,7 +80,7 @@ const initialRow = {
     image: ""
 };
 
-const getRows: RowsGetter = (data) => (data as AnyProps[]).map(item => ({
+const getRows: RowsGetter = (data) => data.map(item => ({
     ...item,
     parent: item.parent?.id || "",
 }));
@@ -123,7 +123,7 @@ const CategoryDataGrid = () => {
 
     return (
         <DataGrid
-            url={"category"}
+            url={"category/all"}
             getCols={getColumns} 
             initialRow={initialRow}
             getRows={getRows}

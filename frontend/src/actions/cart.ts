@@ -11,7 +11,7 @@ const initialState: CartData = [];
 
 
 export const getCartFromLocalStorage = (): CartData => 
-    JSON.parse(window.localStorage.getItem(CART_KEY) || '') || initialState;
+    JSON.parse(window.localStorage.getItem(CART_KEY)!) || initialState;
 
 
 export const saveCartInLocalStorage = (cart: CartData) =>
