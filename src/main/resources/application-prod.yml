@@ -23,3 +23,7 @@ settings:
     secret: bikeshop_jwt
     expiration: 6000000
     refresh-expiration: 864000000
+
+springdoc:
+  swagger-ui:
+    operationsSorter: method

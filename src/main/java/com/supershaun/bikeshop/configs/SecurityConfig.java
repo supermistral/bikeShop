@@ -49,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                .and().authorizeRequests().antMatchers("/api/category/all").hasRole("ADMIN")
                 .and().authorizeRequests().antMatchers(HttpMethod.GET, "/api/items/**", "/api/category/**", "/media/**").permitAll()
                 .and().authorizeRequests().antMatchers(HttpMethod.GET, "/api/orders").authenticated()
                 .and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/orders").authenticated()

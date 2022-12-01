@@ -10,6 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,9 +26,30 @@ public class ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> generalExceptionHandling(Exception exception, WebRequest request) {
+        System.out.println(exception.getMessage());
         return new ResponseEntity<>(
                 new DefaultMessageEntity(exception.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<?> authorizationHeaderMissingHandling(Exception exception, WebRequest request) {
+        String message = exception.getMessage();
+        if (message.indexOf("header 'Authorization'") != -1) {
+            return new ResponseEntity<>(
+                    new DefaultMessageEntity(message),
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+        return generalExceptionHandling(exception, request);
+    }
+
+    @ExceptionHandler(io.jsonwebtoken.MalformedJwtException.class)
+    public ResponseEntity<?> jwtExceptionHandling(Exception exception, WebRequest request) {
+        return new ResponseEntity<>(
+                new DefaultMessageEntity(exception.getMessage()),
+                HttpStatus.UNAUTHORIZED
         );
     }
 

@@ -1,5 +1,6 @@
 package com.supershaun.bikeshop.controllers;
 
+import com.supershaun.bikeshop.exceptions.ApiError;
 import com.supershaun.bikeshop.exceptions.EmailAlreadyInUseException;
 import com.supershaun.bikeshop.exceptions.RoleNotFoundException;
 import com.supershaun.bikeshop.exceptions.TokenRefreshException;
@@ -16,7 +17,15 @@ import com.supershaun.bikeshop.security.JwtUserDetails;
 import com.supershaun.bikeshop.security.jwt.JwtUtils;
 import com.supershaun.bikeshop.services.RefreshTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,8 +42,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(value = "/api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin
+@Tag(name="Аутентификация", description = "Методы для работы с аутентификацией и авторизацией")
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -55,6 +65,14 @@ public class AuthController {
     private RefreshTokenService refreshTokenService;
 
     @PostMapping("/signin")
+    @Operation(summary = "Аутентифицироваться",
+            description = "Получить токены доступа и обновления и пользовательские данные")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Аутентификация выполенена успешно",
+                    content = @Content(schema = @Schema(implementation = UserResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+    })
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDto loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -83,6 +101,16 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @Operation(summary = "Зарегистрироваться",
+            description = "Зарегистрироваться по пользовательским данным")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Регистрация выполнена успешно",
+                    content = @Content(schema = @Schema(implementation = DefaultMessageEntity.class))),
+            @ApiResponse(responseCode = "400", description = "Аккаунт с таким email уже существует",
+                    content = @Content(schema = @Schema(implementation = DefaultMessageEntity.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+    })
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDto signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new EmailAlreadyInUseException();
@@ -136,6 +164,18 @@ public class AuthController {
     }
 
     @PostMapping("/token")
+    @Operation(summary = "Обновить токен доступа",
+            description = "Получить токен доступа по токену обновления")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Операция выполнена успешно",
+                    content = @Content(schema = @Schema(implementation = RefreshTokenRequestDto.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "401", description = "Токен обновления не найден",
+                    content = @Content(schema = @Schema(implementation = DefaultMessageEntity.class))),
+            @ApiResponse(responseCode = "401", description = "Токен обновления просрочен",
+                    content = @Content(schema = @Schema(implementation = DefaultMessageEntity.class)))
+    })
     public ResponseEntity<?> getToken(@Valid @RequestBody RefreshTokenRequestDto request) {
         String requestRefreshToken = request.getRefreshToken();
 
@@ -155,6 +195,15 @@ public class AuthController {
     }
 
     @DeleteMapping("/token")
+    @Operation(summary = "Выйти из аккаунта",
+            description = "Удалить токен обновления")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Выход выполнен успешно",
+                    content = @Content(schema = @Schema(implementation = DefaultMessageEntity.class))),
+            @ApiResponse(responseCode = "401", description = "Некорректный токен",
+                    content = @Content(schema = @Schema(implementation = DefaultMessageEntity.class)))
+    })
+    @SecurityRequirement(name = "JWT Authorization")
     public ResponseEntity<?> logoutUser(@RequestHeader("Authorization") String authorizationHeader) {
         if (!authorizationHeader.startsWith("Bearer ")) {
             throw new TokenRefreshException(authorizationHeader, "Token is not valid");
